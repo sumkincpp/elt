@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %fragmentName.macosx
+Bundle-SymbolicName: com.google.eclipse.cdt.core.macosx;singleton:=true
+Bundle-Version: 5.2.0.qualifier
+Bundle-ClassPath: cdt_macosx.jar
+Bundle-Vendor: %providerName
+Fragment-Host: com.google.eclipse.cdt.core
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Eclipse-PlatformFilter: (osgi.os=macosx)

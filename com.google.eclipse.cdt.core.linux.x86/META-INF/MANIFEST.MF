@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %fragmentName.linux.x86
+Bundle-SymbolicName: com.google.eclipse.cdt.core.linux.x86;singleton:=true
+Bundle-Version: 5.2.0.qualifier
+Bundle-Vendor: %providerName
+Fragment-Host: com.google.eclipse.cdt.core
+Bundle-Localization: plugin
+Eclipse-PlatformFilter: (&(osgi.os=linux)(osgi.arch=x86))

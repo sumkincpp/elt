@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="org.eclipse.ui"
+            class="com.google.eclipse.terminal.local.ui.view.TerminalView"
+            icon="icons/terminal.gif"
+            id="com.google.eclipse.terminal.local.localTerminalView"
+            name="Local Terminal"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <view
+               id="com.google.eclipse.terminal.local.localTerminalView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.console.ConsoleView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            id="com.google.eclipse.terminal.local.openInTerminal"
+            objectClass="org.eclipse.core.resources.IResource">
+         <action
+               class="com.google.eclipse.terminal.local.ui.actions.OpenInTerminalAction"
+               enablesFor="1"
+               icon="icons/terminal.gif"
+               id="com.google.eclipse.terminal.local.action.openInTerminal"
+               label="Open Terminal Here"
+               menubarPath="group.open">
+         </action>
+      </objectContribution>
+   </extension>
+
+</plugin>
