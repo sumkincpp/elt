@@ -15,9 +15,6 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -28,6 +25,9 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.terminal.model.Style;
 import org.eclipse.tm.terminal.model.StyleColor;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class StyleMap {
 	private static final String BLACK = "black"; //$NON-NLS-1$
@@ -40,7 +40,7 @@ public class StyleMap {
 	private static final String BLUE = "blue"; //$NON-NLS-1$
 	private static final String GREEN = "green"; //$NON-NLS-1$
 	private static final String RED = "red"; //$NON-NLS-1$
-	
+
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
 	// TODO propagate the name of the font in the FontRegistry
 	private static final String fDefaultFontName="terminal.views.view.font.definition"; //$NON-NLS-1$
@@ -68,7 +68,7 @@ public class StyleMap {
 		if(fInvertColors) {
 			setColor(fColorMapForeground, WHITE, 0, 0, 0);
 			setColor(fColorMapForeground, WHITE_FOREGROUND, 50, 50, 50);
-			setColor(fColorMapForeground, BLACK, 229, 229, 229);
+			setColor(fColorMapForeground, BLACK, 229, 229, 229); // set foreground
 		} else {
 			setColor(fColorMapForeground, WHITE, 255, 255, 255);
 			setColor(fColorMapForeground, WHITE_FOREGROUND, 229, 229, 229);
@@ -85,9 +85,9 @@ public class StyleMap {
 
 	private void initBackgroundColors() {
 		if(fInvertColors) {
-			setColor(fColorMapBackground, WHITE, 0, 0, 0);
+			setColor(fColorMapBackground, WHITE, 0, 0, 0); // set background
 			setColor(fColorMapBackground, WHITE_FOREGROUND, 50, 50, 50); // only used when colors are inverse
-			setColor(fColorMapBackground, BLACK, 255, 255, 255);
+			setColor(fColorMapBackground, BLACK, 255, 255, 255); // set cursor color
 		} else {
 			setColor(fColorMapBackground, WHITE, 255, 255, 255);
 			setColor(fColorMapBackground, WHITE_FOREGROUND, 229, 229, 229);
@@ -120,7 +120,7 @@ public class StyleMap {
 		setColor(fColorMapIntense, MAGENTA, 255, 0, 255);
 		setColor(fColorMapIntense, GRAY, 255, 255, 255);
 	}
-	
+
 	private void setColor(Map colorMap, String name, int r, int g, int b) {
 		String colorName=PREFIX+r+"-"+g+"-"+b;  //$NON-NLS-1$//$NON-NLS-2$
 		Color color=JFaceResources.getColorRegistry().get(colorName);
@@ -136,17 +136,19 @@ public class StyleMap {
 		style = defaultIfNull(style);
 		Map map = style.isBold() ? fColorMapIntense : fColorMapForeground;
 		//Map map = fColorMapForeground;
-		if(style.isReverse())
-			return getColor(map ,style.getBackground());
-		else
-			return  getColor(map ,style.getForground());
+		if(style.isReverse()) {
+      return getColor(map ,style.getBackground());
+    } else {
+      return  getColor(map ,style.getForground());
+    }
 	}
 	public Color getBackgroundColor(Style style) {
 		style = defaultIfNull(style);
-		if(style.isReverse())
-			return getColor(fColorMapBackground,style.getForground());
-		else
-			return getColor(fColorMapBackground,style.getBackground());
+		if(style.isReverse()) {
+      return getColor(fColorMapBackground,style.getForground());
+    } else {
+      return getColor(fColorMapBackground,style.getBackground());
+    }
 	}
 	Color getColor(Map map,StyleColor color) {
 		Color c=(Color) map.get(color);
@@ -156,13 +158,15 @@ public class StyleMap {
 		return c;
 	}
 	private Style defaultIfNull(Style style) {
-		if(style==null)
-			style=fDefaultStyle;
+		if(style==null) {
+      style=fDefaultStyle;
+    }
 		return style;
 	}
 	public void setInvertedColors(boolean invert) {
-		if(invert==fInvertColors)
-			return;
+		if(invert==fInvertColors) {
+      return;
+    }
 		fInvertColors=invert;
 		initColors();
 	}
@@ -208,12 +212,13 @@ public class StyleMap {
 		gc.setFont(getFont());
 		fCharSize = gc.textExtent ("W"); //$NON-NLS-1$
 		fProportional=false;
-		
+
 		for (char c = ' '; c <= '~'; c++) {
 			// consider only the first 128 chars for deciding if a font
 			// is proportional
-			if(measureChar(gc, c, true))
-				fProportional=true;
+			if(measureChar(gc, c, true)) {
+        fProportional=true;
+      }
 		}
 		// TODO should we also consider the upper 128 chars??
 		for (char c = ' '+128; c <= '~'+128; c++) {
@@ -263,8 +268,9 @@ public class StyleMap {
 	 * @return the offset in x direction to center this character
 	 */
 	public int getCharOffset(char c) {
-		if(c>=fOffsets.length)
-			return 0;
+		if(c>=fOffsets.length) {
+      return 0;
+    }
 		return fOffsets[c];
 	}
 }

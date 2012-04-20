@@ -15,15 +15,19 @@ import static com.google.eclipse.terminal.local.util.Platform.userHomeDirectory;
 import static org.eclipse.core.runtime.Path.fromOSString;
 import static org.eclipse.ui.IWorkbenchPage.VIEW_ACTIVATE;
 
+import com.google.eclipse.terminal.local.core.connector.LifeCycleListener;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-
-import com.google.eclipse.terminal.local.core.connector.LifeCycleListener;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
@@ -81,7 +85,7 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
         });
       }
 
-      @Override public void setState(TerminalState state) {}
+  @Override public void setState(TerminalState state) {}
     });
     IViewSite viewSite = getViewSite();
     terminalWidget.setUpGlobalEditActionHandlers(viewSite.getActionBars());
