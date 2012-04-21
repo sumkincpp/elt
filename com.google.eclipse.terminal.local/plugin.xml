@@ -41,5 +41,13 @@
          </action>
       </objectContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.google.eclipse.terminal.local.ui.preferences.ColorsPreferencePage"
+            id="com.google.eclipse.terminal.local.colors"
+            name="Colors">
+      </page>
+   </extension>
 
 </plugin>
