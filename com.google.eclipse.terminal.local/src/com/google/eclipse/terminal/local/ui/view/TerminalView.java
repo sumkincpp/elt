@@ -17,6 +17,7 @@ import static org.eclipse.core.runtime.Path.fromOSString;
 import static org.eclipse.ui.IWorkbenchPage.VIEW_ACTIVATE;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
@@ -36,7 +37,7 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
 
   private static final String VIEW_ID = "com.google.eclipse.terminal.local.localTerminalView";
 
-  private ColorPreferencesChangeListener colorPreferencesChangeListener;
+  private IPropertyChangeListener colorPreferencesChangeListener;
   private IMemento savedState;
   private TerminalWidget terminalWidget;
   private IPath workingDirectory;
@@ -89,8 +90,13 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     });
     IViewSite viewSite = getViewSite();
     terminalWidget.setUpGlobalEditActionHandlers(viewSite.getActionBars());
-    colorPreferencesChangeListener = new ColorPreferencesChangeListener(terminalWidget);
+    colorPreferencesChangeListener = new AbstractColorPreferencesChangeListener() {
+      @Override protected void onColorChanged() {
+        resetColors();
+      }
+    };
     preferenceStore().addPropertyChangeListener(colorPreferencesChangeListener);
+    resetColors();
     if (savedState != null) {
       connectUsingSavedState();
       return;
@@ -99,6 +105,10 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
       setPartName(defaultViewTitle);
       open(userHomeDirectory());
     }
+  }
+
+  private void resetColors() {
+    terminalWidget.resetTerminalColors(background(), foreground());
   }
 
   private void connectUsingSavedState() {
@@ -133,17 +143,5 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
       preferenceStore().removePropertyChangeListener(colorPreferencesChangeListener);
     }
     super.dispose();
-  }
-
-  private static class ColorPreferencesChangeListener extends AbstractColorPreferencesChangeListener {
-    private final TerminalWidget terminalWidget;
-
-    ColorPreferencesChangeListener(TerminalWidget terminalWidget) {
-      this.terminalWidget = terminalWidget;
-    }
-
-    @Override protected void onColorChanged() {
-      terminalWidget.resetTerminalColors(background(), foreground());
-    }
   }
 }

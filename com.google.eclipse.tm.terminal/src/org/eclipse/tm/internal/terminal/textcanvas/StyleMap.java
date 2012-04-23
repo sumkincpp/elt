@@ -54,6 +54,8 @@ public class StyleMap {
 	private boolean fInvertColors;
 	private boolean fProportional;
 	private final int[] fOffsets=new int[256];
+  private RGB background = new RGB(0, 0, 0);
+  private RGB foreground = new RGB(229, 229, 229);
 	StyleMap() {
 		initColors();
 		fDefaultStyle=Style.getStyle(StyleColor.getStyleColor(BLACK),StyleColor.getStyleColor(WHITE));
@@ -68,7 +70,7 @@ public class StyleMap {
 		if(fInvertColors) {
 			setColor(fColorMapForeground, WHITE, 0, 0, 0);
 			setColor(fColorMapForeground, WHITE_FOREGROUND, 50, 50, 50);
-			setColor(fColorMapForeground, BLACK, 229, 229, 229); // set foreground
+			setColor(fColorMapForeground, BLACK, foreground.red, foreground.green, foreground.blue); // set foreground
 		} else {
 			setColor(fColorMapForeground, WHITE, 255, 255, 255);
 			setColor(fColorMapForeground, WHITE_FOREGROUND, 229, 229, 229);
@@ -85,7 +87,7 @@ public class StyleMap {
 
 	private void initBackgroundColors() {
 		if(fInvertColors) {
-			setColor(fColorMapBackground, WHITE, 0, 0, 0); // set background
+			setColor(fColorMapBackground, WHITE, background.red, background.green, background.blue); // set background
 			setColor(fColorMapBackground, WHITE_FOREGROUND, 50, 50, 50); // only used when colors are inverse
 			setColor(fColorMapBackground, BLACK, 255, 255, 255); // set cursor color
 		} else {
@@ -273,4 +275,10 @@ public class StyleMap {
     }
 		return fOffsets[c];
 	}
+
+	public void resetColors(RGB background, RGB foreground) {
+    this.background = background;
+    this.foreground = foreground;
+    initColors();
+  }
 }

@@ -160,5 +160,6 @@ public class TextLineRenderer implements ILinelRenderer {
 	}
 
 	@Override public void resetColors(RGB background, RGB foreground) {
+	  fStyleMap.resetColors(background, foreground);
   }
 }
