@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.layout.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
@@ -125,6 +126,10 @@ class TerminalWidget extends Composite {
 
   private LocalTerminalConnector localTerminalConnector() {
     return (LocalTerminalConnector) terminalControl.getTerminalConnector().getAdapter(LocalTerminalConnector.class);
+  }
+
+  void resetTerminalColors(RGB background, RGB foreground) {
+    terminalControl.resetColors(background, foreground);
   }
 
   @Override public boolean setFocus() {

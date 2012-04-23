@@ -43,7 +43,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.tm.internal.terminal.control.*;
@@ -1046,4 +1046,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	public void setInvertedColors(boolean invert) {
 		fCtlText.setInvertedColors(invert);
 	}
+
+  public void resetColors(RGB background, RGB foreground) {
+    fCtlText.resetColors(background, foreground);
+  }
 }

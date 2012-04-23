@@ -8,10 +8,12 @@
  */
 package com.google.eclipse.terminal.local.ui.preferences;
 
-import static com.google.eclipse.terminal.local.Activator.log;
+import static com.google.eclipse.terminal.local.Activator.*;
+import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*;
 import static org.eclipse.jface.preference.ColorSelector.PROP_COLORCHANGE;
 import static org.eclipse.swt.SWT.*;
 
+import java.io.InputStream;
 import java.util.Scanner;
 
 import org.eclipse.jface.preference.*;
@@ -37,6 +39,7 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
   }
 
   @Override public void init(IWorkbench workbench) {
+    setPreferenceStore(preferenceStore());
   }
 
   @Override protected Control createContents(Composite parent) {
@@ -63,17 +66,25 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
     previewerText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
     Cursor arrowCursor = previewerText.getDisplay().getSystemCursor(CURSOR_ARROW);
     previewerText.setCursor(arrowCursor);
-    Display display = getShell().getDisplay();
-    backgroundColorSelector.addListener(new ColorChangeListener(display) {
-      @Override void updateColor(Color color) {
-        previewer.getTextWidget().setBackground(color);
+    backgroundColorSelector.addListener(new ColorChangeListener() {
+      @Override void updateColor(RGB color) {
+        validateInput();
+        if (isValid()) {
+          previewer.getTextWidget().setBackground(newColor(color));
+        }
       }
     });
-    foregroundColorSelector.addListener(new ColorChangeListener(display) {
-      @Override void updateColor(Color color) {
-        previewer.setTextColor(color);
+    foregroundColorSelector.addListener(new ColorChangeListener() {
+      @Override void updateColor(RGB color) {
+        validateInput();
+        if (isValid()) {
+          previewer.setTextColor(newColor(color));
+        }
       }
     });
+    displayValue(BACKGROUND_COLOR, backgroundColorSelector);
+    displayValue(FOREGROUND_COLOR, foregroundColorSelector);
+    updatePreview();
     return contents;
   }
 
@@ -82,7 +93,8 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
     StringBuilder buffer = new StringBuilder();
     Scanner scanner = null;
     try {
-      scanner = new Scanner(getClass().getResourceAsStream(fileName));
+      InputStream inputStream = getClass().getResourceAsStream(fileName);
+      scanner = new Scanner(inputStream);
       while (scanner.hasNextLine()) {
         String line = scanner.nextLine();
         buffer.append(line).append(lineSeparator);
@@ -97,20 +109,67 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
     return buffer.toString();
   }
 
-  private static abstract class ColorChangeListener implements IPropertyChangeListener {
-    private final Device device;
-
-    private ColorChangeListener(Device device) {
-      this.device = device;
+  private void validateInput() {
+    if (backgroundColorSelector.getColorValue().equals(foregroundColorSelector.getColorValue())) {
+      setErrorMessage("Background and foreground colors cannot be the same");
+      setValid(false);
+      return;
     }
+    pageIsValid();
+  }
 
+  private void pageIsValid() {
+    setErrorMessage(null);
+    setValid(true);
+  }
+
+  private void displayValue(String preferenceName, ColorSelector colorSelector) {
+    RGB color = PreferenceConverter.getColor(getPreferenceStore(), preferenceName);
+    colorSelector.setColorValue(color);
+  }
+
+  private Color newColor(RGB rgb) {
+    return new Color(display(), rgb);
+  }
+
+  private Display display() {
+    return getShell().getDisplay();
+  }
+
+  @Override public boolean performOk() {
+    storeValue(BACKGROUND_COLOR, backgroundColorSelector);
+    storeValue(FOREGROUND_COLOR, foregroundColorSelector);
+    return true;
+  }
+
+  private void storeValue(String preferenceName, ColorSelector colorSelector) {
+    PreferenceConverter.setValue(getPreferenceStore(), preferenceName, colorSelector.getColorValue());
+  }
+
+  @Override protected void performDefaults() {
+    displayDefaultValue(BACKGROUND_COLOR, backgroundColorSelector);
+    displayDefaultValue(FOREGROUND_COLOR, foregroundColorSelector);
+    updatePreview();
+  }
+
+  private void displayDefaultValue(String preferenceName, ColorSelector colorSelector) {
+    RGB color = PreferenceConverter.getDefaultColor(getPreferenceStore(), preferenceName);
+    colorSelector.setColorValue(color);
+  }
+
+  private void updatePreview() {
+    previewer.getTextWidget().setBackground(newColor(backgroundColorSelector.getColorValue()));
+    previewer.setTextColor(newColor(foregroundColorSelector.getColorValue()));
+  }
+
+  private static abstract class ColorChangeListener implements IPropertyChangeListener {
     @Override public final void propertyChange(PropertyChangeEvent event) {
       if (PROP_COLORCHANGE.equals(event.getProperty())) {
         RGB rgb = (RGB) event.getNewValue();
-        updateColor(new Color(device, rgb));
+        updateColor(rgb);
       }
     }
 
-    abstract void updateColor(Color color);
+    abstract void updateColor(RGB rgb);
   }
 }

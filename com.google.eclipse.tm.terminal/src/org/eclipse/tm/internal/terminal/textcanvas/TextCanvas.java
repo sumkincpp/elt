@@ -28,10 +28,7 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -402,5 +399,9 @@ public class TextCanvas extends GridCanvas {
 		}
 
 	}
+
+  public void resetColors(RGB background, RGB foreground) {
+    fCellRenderer.resetColors(background, foreground);
+  }
 }
 

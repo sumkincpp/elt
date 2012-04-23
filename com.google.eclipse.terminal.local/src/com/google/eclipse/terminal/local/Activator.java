@@ -11,6 +11,7 @@ package com.google.eclipse.terminal.local;
 import static org.eclipse.core.runtime.IStatus.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -39,10 +40,14 @@ public class Activator extends AbstractUIPlugin {
   }
 
   public static void log(IStatus status) {
-    getDefault().getLog().log(status);
+    instance().getLog().log(status);
   }
 
-  public static Activator getDefault() {
+  public static Activator instance() {
     return plugin;
+  }
+
+  public static IPreferenceStore preferenceStore() {
+    return instance().getPreferenceStore();
   }
 }

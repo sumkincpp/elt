@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.*;
 
 /**
  *
@@ -24,4 +23,5 @@ public interface ILinelRenderer {
 	void onFontChange();
 	void setInvertedColors(boolean invert);
 	Color getDefaultBackgroundColor();
+  void resetColors(RGB background, RGB foreground);
 }

@@ -14,10 +14,7 @@
 package org.eclipse.tm.internal.terminal.textcanvas;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.LineSegment;
@@ -161,4 +158,7 @@ public class TextLineRenderer implements ILinelRenderer {
 		fStyleMap.setInvertedColors(invert);
 
 	}
+
+	@Override public void resetColors(RGB background, RGB foreground) {
+  }
 }
