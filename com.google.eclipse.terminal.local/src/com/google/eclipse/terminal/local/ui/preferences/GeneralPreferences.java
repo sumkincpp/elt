@@ -8,13 +8,16 @@
  */
 package com.google.eclipse.terminal.local.ui.preferences;
 
+import static com.google.eclipse.terminal.local.Activator.preferenceStore;
+import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.CLOSE_VIEW_ON_EXIT;
+
 /**
  * @author alruiz@google.com (Alex Ruiz)
  */
-final class PreferenceNames {
-  static final String CLOSE_VIEW_ON_EXIT = "exitViewOnExit";
-  static final String BACKGROUND_COLOR = "backgroundColor";
-  static final String FOREGROUND_COLOR = "foregroundColor";
+public final class GeneralPreferences {
+  public static boolean closeViewOnExit() {
+    return preferenceStore().getBoolean(CLOSE_VIEW_ON_EXIT);
+  }
 
-  private PreferenceNames() {}
+  private GeneralPreferences() {}
 }

@@ -15,7 +15,7 @@ import org.eclipse.jface.util.*;
 /**
  * @author alruiz@google.com (Alex Ruiz)
  */
-public abstract class AbstractColorPreferencesChangeListener implements IPropertyChangeListener {
+public abstract class AbstractColorsAndFontsPreferencesChangeListener implements IPropertyChangeListener {
   @Override public final void propertyChange(PropertyChangeEvent event) {
     String property = event.getProperty();
     if (BACKGROUND_COLOR.equals(property) || FOREGROUND_COLOR.equals(property)) {

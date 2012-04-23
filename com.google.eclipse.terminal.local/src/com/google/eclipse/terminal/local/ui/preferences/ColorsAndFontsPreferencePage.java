@@ -12,7 +12,6 @@ import static com.google.eclipse.terminal.local.Activator.*;
 import static com.google.eclipse.terminal.local.ui.preferences.Messages.*;
 import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*;
 import static org.eclipse.jface.preference.ColorSelector.PROP_COLORCHANGE;
-import static org.eclipse.swt.SWT.*;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -36,15 +35,12 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
   private ColorSelector foregroundColorSelector;
   private ColorSelector backgroundColorSelector;
 
-  public ColorsAndFontsPreferencePage() {
-  }
-
   @Override public void init(IWorkbench workbench) {
     setPreferenceStore(preferenceStore());
   }
 
   @Override protected Control createContents(Composite parent) {
-    Composite contents = new Composite(parent, NONE);
+    Composite contents = new Composite(parent, SWT.NONE);
     contents.setLayout(new GridLayout(1, false));
     Label lblDescription = new Label(contents, SWT.NONE);
     lblDescription.setText(colorsAndFontsTitle);
@@ -60,12 +56,12 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
     new Label(contents, SWT.NONE);
     Label lblPreview = new Label(contents, SWT.NONE);
     lblPreview.setText(previewPrompt);
-    previewer = new ProjectionViewer(contents, null, null, false, V_SCROLL | H_SCROLL);
+    previewer = new ProjectionViewer(contents, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL);
     previewer.setEditable(false);
     previewer.setDocument(new Document(loadContentsFrom("ColorSettingPreviewText.txt"))); //$NON-NLS-1$
     StyledText previewerText = previewer.getTextWidget();
     previewerText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-    Cursor arrowCursor = previewerText.getDisplay().getSystemCursor(CURSOR_ARROW);
+    Cursor arrowCursor = previewerText.getDisplay().getSystemCursor(SWT.CURSOR_ARROW);
     previewerText.setCursor(arrowCursor);
     backgroundColorSelector.addListener(new ColorChangeListener() {
       @Override void onColorChanged(RGB newValue) {
@@ -83,9 +79,7 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
         }
       }
     });
-    displayValue(BACKGROUND_COLOR, backgroundColorSelector);
-    displayValue(FOREGROUND_COLOR, foregroundColorSelector);
-    updatePreview();
+    updateContents();
     return contents;
   }
 
@@ -122,6 +116,12 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
   private void pageIsValid() {
     setErrorMessage(null);
     setValid(true);
+  }
+
+  private void updateContents() {
+    displayValue(BACKGROUND_COLOR, backgroundColorSelector);
+    displayValue(FOREGROUND_COLOR, foregroundColorSelector);
+    updatePreview();
   }
 
   private void displayValue(String preferenceName, ColorSelector colorSelector) {

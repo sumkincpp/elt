@@ -16,8 +16,10 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
   public static String backgroundAndForegroundCannotBeTheSame;
   public static String backgroundPrompt;
+  public static String closeViewOnExit;
   public static String colorsAndFontsTitle;
   public static String foregroundPrompt;
+  public static String generalPreferencesTitle;
   public static String previewPrompt;
   public static String unableToLoadPreviewContent;
 

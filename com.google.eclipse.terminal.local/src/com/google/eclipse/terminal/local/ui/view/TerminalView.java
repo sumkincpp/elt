@@ -10,6 +10,7 @@ package com.google.eclipse.terminal.local.ui.view;
 
 import static com.google.eclipse.terminal.local.Activator.*;
 import static com.google.eclipse.terminal.local.ui.preferences.ColorsAndFontsPreferences.*;
+import static com.google.eclipse.terminal.local.ui.preferences.GeneralPreferences.closeViewOnExit;
 import static com.google.eclipse.terminal.local.ui.util.Displays.runInDisplayThread;
 import static com.google.eclipse.terminal.local.ui.view.Messages.defaultViewTitle;
 import static com.google.eclipse.terminal.local.util.Platform.userHomeDirectory;
@@ -26,7 +27,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
 
 import com.google.eclipse.terminal.local.core.connector.LifeCycleListener;
-import com.google.eclipse.terminal.local.ui.preferences.AbstractColorPreferencesChangeListener;
+import com.google.eclipse.terminal.local.ui.preferences.AbstractColorsAndFontsPreferencesChangeListener;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
@@ -55,7 +56,15 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   }
 
   @Override public void executionFinished() {
-    // TODO Close view on exit
+    if (closeViewOnExit() && terminalWidget != null && !terminalWidget.isDisposed()) {
+      // must run in UI thread.
+      terminalWidget.getDisplay().asyncExec(new Runnable() {
+        @Override public void run() {
+          IWorkbenchPartSite site = getSite();
+          site.getPage().hideView((IViewPart) site.getPart());
+        }
+      });
+    }
   }
 
   @Override public void init(IViewSite site, IMemento memento) throws PartInitException {
@@ -90,7 +99,7 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     });
     IViewSite viewSite = getViewSite();
     terminalWidget.setUpGlobalEditActionHandlers(viewSite.getActionBars());
-    colorPreferencesChangeListener = new AbstractColorPreferencesChangeListener() {
+    colorPreferencesChangeListener = new AbstractColorsAndFontsPreferencesChangeListener() {
       @Override protected void onColorChanged() {
         resetColors();
       }
