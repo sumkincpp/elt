@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.RGB;
 /**
  * @author alruiz@google.com (Alex Ruiz)
  */
-public class ColorPreferences {
+public class ColorsAndFontsPreferences {
 
   public static RGB background() {
     return PreferenceConverter.getColor(preferenceStore(), BACKGROUND_COLOR);

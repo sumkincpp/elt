@@ -9,7 +9,7 @@
 package com.google.eclipse.terminal.local.ui.view;
 
 import static com.google.eclipse.terminal.local.Activator.*;
-import static com.google.eclipse.terminal.local.ui.preferences.ColorPreferences.*;
+import static com.google.eclipse.terminal.local.ui.preferences.ColorsAndFontsPreferences.*;
 import static com.google.eclipse.terminal.local.ui.util.Displays.runInDisplayThread;
 import static com.google.eclipse.terminal.local.ui.view.Messages.defaultViewTitle;
 import static com.google.eclipse.terminal.local.util.Platform.userHomeDirectory;

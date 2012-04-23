@@ -44,9 +44,9 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="com.google.eclipse.terminal.local.ui.preferences.ColorsPreferencePage"
+            class="com.google.eclipse.terminal.local.ui.preferences.ColorsAndFontsPreferencePage"
             id="com.google.eclipse.terminal.local.colors"
-            name="Local Terminal Colors">
+            name="Local Terminal Colors and Fonts">
       </page>
    </extension>
    <extension

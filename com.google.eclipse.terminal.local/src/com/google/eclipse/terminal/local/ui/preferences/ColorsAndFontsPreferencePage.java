@@ -9,6 +9,7 @@
 package com.google.eclipse.terminal.local.ui.preferences;
 
 import static com.google.eclipse.terminal.local.Activator.*;
+import static com.google.eclipse.terminal.local.ui.preferences.Messages.*;
 import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*;
 import static org.eclipse.jface.preference.ColorSelector.PROP_COLORCHANGE;
 import static org.eclipse.swt.SWT.*;
@@ -30,12 +31,12 @@ import org.eclipse.ui.*;
 /**
  * @author alruiz@google.com (Alex Ruiz)
  */
-public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class ColorsAndFontsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
   private ProjectionViewer previewer;
   private ColorSelector foregroundColorSelector;
   private ColorSelector backgroundColorSelector;
 
-  public ColorsPreferencePage() {
+  public ColorsAndFontsPreferencePage() {
   }
 
   @Override public void init(IWorkbench workbench) {
@@ -46,39 +47,39 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
     Composite contents = new Composite(parent, NONE);
     contents.setLayout(new GridLayout(1, false));
     Label lblDescription = new Label(contents, SWT.NONE);
-    lblDescription.setText("Local terminal color preferences.");
+    lblDescription.setText(colorsAndFontsTitle);
     new Label(contents, SWT.NONE);
     Composite controls = new Composite(contents, SWT.NONE);
     controls.setLayout(new GridLayout(2, false));
     Label lblBackground = new Label(controls, SWT.NONE);
-    lblBackground.setText("Background:");
+    lblBackground.setText(backgroundPrompt);
     backgroundColorSelector = new ColorSelector(controls);
     Label lblForeground = new Label(controls, SWT.NONE);
-    lblForeground.setText("Foreground:");
+    lblForeground.setText(foregroundPrompt);
     foregroundColorSelector = new ColorSelector(controls);
     new Label(contents, SWT.NONE);
     Label lblPreview = new Label(contents, SWT.NONE);
-    lblPreview.setText("Preview:");
+    lblPreview.setText(previewPrompt);
     previewer = new ProjectionViewer(contents, null, null, false, V_SCROLL | H_SCROLL);
     previewer.setEditable(false);
-    previewer.setDocument(new Document(loadContentsFrom("ColorSettingPreviewText.txt")));
+    previewer.setDocument(new Document(loadContentsFrom("ColorSettingPreviewText.txt"))); //$NON-NLS-1$
     StyledText previewerText = previewer.getTextWidget();
     previewerText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
     Cursor arrowCursor = previewerText.getDisplay().getSystemCursor(CURSOR_ARROW);
     previewerText.setCursor(arrowCursor);
     backgroundColorSelector.addListener(new ColorChangeListener() {
-      @Override void updateColor(RGB color) {
+      @Override void onColorChanged(RGB newValue) {
         validateInput();
         if (isValid()) {
-          previewer.getTextWidget().setBackground(newColor(color));
+          previewer.getTextWidget().setBackground(newColor(newValue));
         }
       }
     });
     foregroundColorSelector.addListener(new ColorChangeListener() {
-      @Override void updateColor(RGB color) {
+      @Override void onColorChanged(RGB newValue) {
         validateInput();
         if (isValid()) {
-          previewer.setTextColor(newColor(color));
+          previewer.setTextColor(newColor(newValue));
         }
       }
     });
@@ -89,7 +90,7 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
   }
 
   private String loadContentsFrom(String fileName) {
-    String lineSeparator = System.getProperty("line.separator");
+    String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
     StringBuilder buffer = new StringBuilder();
     Scanner scanner = null;
     try {
@@ -100,7 +101,7 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
         buffer.append(line).append(lineSeparator);
       }
     } catch (RuntimeException e) {
-      log("Unable to load preview content", e);
+      log(unableToLoadPreviewContent, e);
     } finally {
       if (scanner != null) {
         scanner.close();
@@ -111,7 +112,7 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
 
   private void validateInput() {
     if (backgroundColorSelector.getColorValue().equals(foregroundColorSelector.getColorValue())) {
-      setErrorMessage("Background and foreground colors cannot be the same");
+      setErrorMessage(backgroundAndForegroundCannotBeTheSame);
       setValid(false);
       return;
     }
@@ -129,11 +130,7 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
   }
 
   private Color newColor(RGB rgb) {
-    return new Color(display(), rgb);
-  }
-
-  private Display display() {
-    return getShell().getDisplay();
+    return new Color(getShell().getDisplay(), rgb);
   }
 
   @Override public boolean performOk() {
@@ -153,8 +150,8 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
   }
 
   private void displayDefaultValue(String preferenceName, ColorSelector colorSelector) {
-    RGB color = PreferenceConverter.getDefaultColor(getPreferenceStore(), preferenceName);
-    colorSelector.setColorValue(color);
+    RGB rgb = PreferenceConverter.getDefaultColor(getPreferenceStore(), preferenceName);
+    colorSelector.setColorValue(rgb);
   }
 
   private void updatePreview() {
@@ -166,10 +163,10 @@ public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override public final void propertyChange(PropertyChangeEvent event) {
       if (PROP_COLORCHANGE.equals(event.getProperty())) {
         RGB rgb = (RGB) event.getNewValue();
-        updateColor(rgb);
+        onColorChanged(rgb);
       }
     }
 
-    abstract void updateColor(RGB rgb);
+    abstract void onColorChanged(RGB newValue);
   }
 }
