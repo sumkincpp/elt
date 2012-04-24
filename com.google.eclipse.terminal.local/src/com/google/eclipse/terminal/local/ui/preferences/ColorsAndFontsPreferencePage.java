@@ -96,20 +96,20 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
 
     btnUseTextFont = new Button(grpFont, SWT.RADIO);
     gridDataFactory.span(2, 1).applyTo(btnUseTextFont);
-    btnUseTextFont.setText("Use Eclipse's \"Text Font\"");
+    btnUseTextFont.setText(useTextFont);
     btnUseTextFont.addSelectionListener(fontButtonSelectionListener);
 
     btnUseCustomFont = new Button(grpFont, SWT.RADIO);
     gridDataFactory.applyTo(btnUseCustomFont);
-    btnUseCustomFont.setText("Use custom font");
+    btnUseCustomFont.setText(useCustomFont);
     btnUseCustomFont.addSelectionListener(fontButtonSelectionListener);
 
     lblFontData = new Label(grpFont, SWT.NONE);
     gridDataFactory.span(1, 1).applyTo(lblFontData);
-    lblFontData.setText("");
+    lblFontData.setText(""); //$NON-NLS-1$
 
     btnChangeFont = new Button(grpFont, SWT.NONE);
-    btnChangeFont.setText("Change...");
+    btnChangeFont.setText(change);
     btnChangeFont.addSelectionListener(new SelectionAdapter() {
       @Override public void widgetSelected(SelectionEvent e) {
         FontDialog fontDialog = new FontDialog(getShell());
@@ -166,7 +166,7 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
   }
 
   private String loadContentsFrom(String fileName) {
-    String lineSeparator = System.getProperty("line.separator");
+    String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
     StringBuilder buffer = new StringBuilder();
     Scanner scanner = null;
     try {
