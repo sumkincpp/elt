@@ -1047,7 +1047,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fCtlText.setInvertedColors(invert);
 	}
 
-  public void resetColors(RGB background, RGB foreground) {
-    fCtlText.resetColors(background, foreground);
+  public void setColors(RGB background, RGB foreground) {
+    fCtlText.setColors(background, foreground);
   }
 }

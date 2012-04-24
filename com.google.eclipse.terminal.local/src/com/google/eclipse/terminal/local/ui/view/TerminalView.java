@@ -15,10 +15,12 @@ import static com.google.eclipse.terminal.local.ui.util.Displays.runInDisplayThr
 import static com.google.eclipse.terminal.local.ui.view.Messages.defaultViewTitle;
 import static com.google.eclipse.terminal.local.util.Platform.userHomeDirectory;
 import static org.eclipse.core.runtime.Path.fromOSString;
+import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
 import static org.eclipse.ui.IWorkbenchPage.VIEW_ACTIVATE;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
@@ -39,6 +41,7 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   private static final String VIEW_ID = "com.google.eclipse.terminal.local.localTerminalView";
 
   private IPropertyChangeListener colorPreferencesChangeListener;
+  private IPropertyChangeListener textFontChangeListener;
   private IMemento savedState;
   private TerminalWidget terminalWidget;
   private IPath workingDirectory;
@@ -101,11 +104,20 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     terminalWidget.setUpGlobalEditActionHandlers(viewSite.getActionBars());
     colorPreferencesChangeListener = new AbstractColorsAndFontsPreferencesChangeListener() {
       @Override protected void onColorChanged() {
-        resetColors();
+        updateColors();
       }
     };
     preferenceStore().addPropertyChangeListener(colorPreferencesChangeListener);
-    resetColors();
+    updateColors();
+    textFontChangeListener = new IPropertyChangeListener() {
+      @Override public void propertyChange(PropertyChangeEvent event) {
+        if (TEXT_FONT.equals(event.getProperty())) {
+          updateFont();
+        }
+      }
+    };
+    JFaceResources.getFontRegistry().addListener(textFontChangeListener);
+    updateFont();
     if (savedState != null) {
       connectUsingSavedState();
       return;
@@ -116,8 +128,12 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     }
   }
 
-  private void resetColors() {
-    terminalWidget.resetTerminalColors(background(), foreground());
+  private void updateColors() {
+    terminalWidget.setColors(background(), foreground());
+  }
+
+  private void updateFont() {
+    terminalWidget.setFont(JFaceResources.getTextFont());
   }
 
   private void connectUsingSavedState() {
@@ -150,6 +166,9 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   @Override public void dispose() {
     if (colorPreferencesChangeListener != null) {
       preferenceStore().removePropertyChangeListener(colorPreferencesChangeListener);
+    }
+    if (textFontChangeListener != null) {
+      JFaceResources.getFontRegistry().removeListener(textFontChangeListener);
     }
     super.dispose();
   }

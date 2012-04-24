@@ -276,7 +276,7 @@ public class StyleMap {
 		return fOffsets[c];
 	}
 
-	public void resetColors(RGB background, RGB foreground) {
+	public void setColors(RGB background, RGB foreground) {
     this.background = background;
     this.foreground = foreground;
     initColors();

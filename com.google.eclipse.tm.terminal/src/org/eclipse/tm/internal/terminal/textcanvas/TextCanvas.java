@@ -400,8 +400,8 @@ public class TextCanvas extends GridCanvas {
 
 	}
 
-  public void resetColors(RGB background, RGB foreground) {
-    fCellRenderer.resetColors(background, foreground);
+  public void setColors(RGB background, RGB foreground) {
+    fCellRenderer.setColors(background, foreground);
   }
 }
 

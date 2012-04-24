@@ -23,5 +23,5 @@ public interface ILinelRenderer {
 	void onFontChange();
 	void setInvertedColors(boolean invert);
 	Color getDefaultBackgroundColor();
-  void resetColors(RGB background, RGB foreground);
+  void setColors(RGB background, RGB foreground);
 }
