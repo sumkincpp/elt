@@ -13,6 +13,7 @@ import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.RGB;
 
 /**
@@ -23,6 +24,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     preferenceStore().setDefault(CLOSE_VIEW_ON_EXIT, true);
     setDefault(BACKGROUND_COLOR, new RGB(0, 0, 0));
     setDefault(FOREGROUND_COLOR, new RGB(229, 229, 229));
+    preferenceStore().setDefault(USE_CUSTOM_FONT, false);
+    PreferenceConverter.setDefault(preferenceStore(), CUSTOM_FONT_DATA, JFaceResources.getTextFont().getFontData());
   }
 
   private void setDefault(String name, RGB value) {

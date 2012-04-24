@@ -162,4 +162,8 @@ public class TextLineRenderer implements ILinelRenderer {
 	@Override public void setColors(RGB background, RGB foreground) {
 	  fStyleMap.setColors(background, foreground);
   }
+
+	@Override public void setFont(Font font) {
+	  fStyleMap.setFont(font);
+  }
 }

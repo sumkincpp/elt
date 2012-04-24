@@ -15,6 +15,8 @@ final class PreferenceNames {
   static final String CLOSE_VIEW_ON_EXIT = "exitViewOnExit";
   static final String BACKGROUND_COLOR = "backgroundColor";
   static final String FOREGROUND_COLOR = "foregroundColor";
+  static final String USE_CUSTOM_FONT = "useCustomFont";
+  static final String CUSTOM_FONT_DATA = "customFontData";
 
   private PreferenceNames() {}
 }

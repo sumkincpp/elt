@@ -22,7 +22,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.ui.*;
@@ -106,13 +107,19 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
       @Override protected void onColorChanged() {
         updateColors();
       }
+
+      @Override protected void onFontChanged() {
+        updateFont();
+      }
     };
     preferenceStore().addPropertyChangeListener(colorPreferencesChangeListener);
     updateColors();
     textFontChangeListener = new IPropertyChangeListener() {
       @Override public void propertyChange(PropertyChangeEvent event) {
         if (TEXT_FONT.equals(event.getProperty())) {
-          updateFont();
+          if (!useCustomFont()) {
+            setFont(JFaceResources.getTextFont());
+          }
         }
       }
     };
@@ -133,7 +140,18 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   }
 
   private void updateFont() {
-    terminalWidget.setFont(JFaceResources.getTextFont());
+    setFont(terminalFont());
+  }
+
+  private Font terminalFont() {
+    if (useCustomFont()) {
+      return new Font(Display.getDefault(), customFontData());
+    }
+    return JFaceResources.getTextFont();
+  }
+
+  private void setFont(Font font) {
+    terminalWidget.setFont(font);
   }
 
   private void connectUsingSavedState() {

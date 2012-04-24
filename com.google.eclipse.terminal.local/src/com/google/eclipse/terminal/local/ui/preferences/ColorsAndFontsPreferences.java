@@ -10,9 +10,9 @@ package com.google.eclipse.terminal.local.ui.preferences;
 
 import static com.google.eclipse.terminal.local.Activator.preferenceStore;
 import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*;
+import static org.eclipse.jface.preference.PreferenceConverter.*;
 
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
@@ -20,10 +20,18 @@ import org.eclipse.swt.graphics.RGB;
 public class ColorsAndFontsPreferences {
 
   public static RGB background() {
-    return PreferenceConverter.getColor(preferenceStore(), BACKGROUND_COLOR);
+    return getColor(preferenceStore(), BACKGROUND_COLOR);
   }
 
   public static RGB foreground() {
-    return PreferenceConverter.getColor(preferenceStore(), FOREGROUND_COLOR);
+    return getColor(preferenceStore(), FOREGROUND_COLOR);
+  }
+
+  public static boolean useCustomFont() {
+    return preferenceStore().getBoolean(USE_CUSTOM_FONT);
+  }
+
+  public static FontData customFontData() {
+    return getFontData(preferenceStore(), CUSTOM_FONT_DATA);
   }
 }

@@ -21,7 +21,12 @@ public abstract class AbstractColorsAndFontsPreferencesChangeListener implements
     if (BACKGROUND_COLOR.equals(property) || FOREGROUND_COLOR.equals(property)) {
       onColorChanged();
     }
+    if (CUSTOM_FONT_DATA.equals(property)) {
+      onFontChanged();
+    }
   }
 
   protected abstract void onColorChanged();
+
+  protected abstract void onFontChanged();
 }

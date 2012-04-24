@@ -403,5 +403,10 @@ public class TextCanvas extends GridCanvas {
   public void setColors(RGB background, RGB foreground) {
     fCellRenderer.setColors(background, foreground);
   }
+  
+  @Override public void setFont(Font font) {
+    super.setFont(font);
+    fCellRenderer.setFont(font);
+  }
 }
 

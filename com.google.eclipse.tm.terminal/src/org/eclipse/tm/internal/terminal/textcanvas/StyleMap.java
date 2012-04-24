@@ -17,11 +17,7 @@ package org.eclipse.tm.internal.terminal.textcanvas;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.terminal.model.Style;
 import org.eclipse.tm.terminal.model.StyleColor;
@@ -56,6 +52,7 @@ public class StyleMap {
 	private final int[] fOffsets=new int[256];
   private RGB background = new RGB(0, 0, 0);
   private RGB foreground = new RGB(229, 229, 229);
+  private Font font = JFaceResources.getFontRegistry().get(fFontName);
 	StyleMap() {
 		initColors();
 		fDefaultStyle=Style.getStyle(StyleColor.getStyleColor(BLACK),StyleColor.getStyleColor(WHITE));
@@ -180,17 +177,18 @@ public class StyleMap {
 
 	public Font getFont(Style style) {
 		style = defaultIfNull(style);
+    FontData fontDatas[] = font.getFontData();
+    FontData data = fontDatas[0];
 		if(style.isBold()) {
-			return  JFaceResources.getFontRegistry().getBold(fFontName);
+      return new Font(font.getDevice(), data.getName(), data.getHeight(), data.getStyle() | SWT.BOLD);
 		} else if(style.isUnderline()) {
-			return  JFaceResources.getFontRegistry().getItalic(fFontName);
-
+      return new Font(font.getDevice(), data.getName(), data.getHeight(), data.getStyle() | SWT.ITALIC);
 		}
-		return  JFaceResources.getFontRegistry().get(fFontName);
+		return font;
 	}
 
 	public Font getFont() {
-		return  JFaceResources.getFontRegistry().get(fFontName);
+		return font;
 
 	}
 	public int getFontWidth() {
@@ -280,5 +278,9 @@ public class StyleMap {
     this.background = background;
     this.foreground = foreground;
     initColors();
+  }
+
+	public void setFont(Font font) {
+    this.font = font;
   }
 }
