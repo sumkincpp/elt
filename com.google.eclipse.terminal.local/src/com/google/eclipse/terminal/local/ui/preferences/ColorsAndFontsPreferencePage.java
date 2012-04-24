@@ -15,6 +15,7 @@ import static org.eclipse.jface.layout.GridDataFactory.fillDefaults;
 import static org.eclipse.jface.preference.ColorSelector.PROP_COLORCHANGE;
 import static org.eclipse.jface.preference.PreferenceConverter.*;
 import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
+import static org.eclipse.ui.dialogs.PreferencesUtil.createPreferenceDialogOn;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -29,7 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
@@ -98,6 +99,20 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
     gridDataFactory.span(2, 1).applyTo(btnUseTextFont);
     btnUseTextFont.setText(useTextFont);
     btnUseTextFont.addSelectionListener(fontButtonSelectionListener);
+
+    Link changeTextFontLink = new Link(grpFont, SWT.NONE);
+    changeTextFontLink.setText(textFontLink);
+    GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+    gridData.widthHint = 150; // only expand further if anyone else requires it
+    gridData.horizontalSpan = 2;
+    changeTextFontLink.setLayoutData(gridData);
+    changeTextFontLink.addSelectionListener(new SelectionAdapter() {
+      @Override public void widgetSelected(SelectionEvent e) {
+        if ("org.eclipse.ui.preferencePages.ColorsAndFonts".equals(e.text)) {
+          createPreferenceDialogOn(getShell(), e.text, null, TEXT_FONT);
+        }
+      }
+    });
 
     btnUseCustomFont = new Button(grpFont, SWT.RADIO);
     gridDataFactory.applyTo(btnUseCustomFont);
