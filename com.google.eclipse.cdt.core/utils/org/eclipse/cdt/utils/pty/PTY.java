@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
  * PTY - pseudo terminal support.
  */
 public class PTY {
-  static final String LIBRARY_NAME = "gpty";
+	static final String LIBRARY_NAME = "gpty"; //$NON-NLS-1$
 
 	final boolean console;
 	String slave;
@@ -34,8 +34,8 @@ public class PTY {
 	private static boolean setTerminalSizeErrorAlreadyLogged;
 
 	/**
-	 * The master fd is used on two streams. We need to wrap the fd
-	 * so that when stream.close() is called the other stream is disabled.
+	 * The master fd is used on two streams. We need to wrap the fd so that when stream.close() is called the
+	 * other stream is disabled.
 	 */
 	public class MasterFD {
 
@@ -49,8 +49,7 @@ public class PTY {
 	}
 
 	/**
-	 * Create PTY for use with Eclipse console.
-	 * Identical to {@link PTY#PTY(boolean) PTY(true)}.
+	 * Create PTY for use with Eclipse console. Identical to {@link PTY#PTY(boolean) PTY(true)}.
 	 */
 	public PTY() throws IOException {
 		this(true);
@@ -60,29 +59,28 @@ public class PTY {
 	 * Create pseudo terminal.
 	 *
 	 * <p>
-	 * The provided flag indicates whether the pseudo terminal is used with the interactive
-	 * Eclipse console:
+	 * The provided flag indicates whether the pseudo terminal is used with the interactive Eclipse console:
 	 * <ul>
-	 * <li>If <code>true</code> the terminal is configured with no echo and stderr is
-	 * redirected to a pipe instead of the PTY.</li>
-	 * <li>If <code>false</code> the terminal is configured with echo and stderr is
-	 * connected to the PTY. This mode is best suited for use with a proper terminal emulation.
-	 * Note that this mode might not be supported on all platforms.
-	 * Known platforms which support this mode are:
-	 * <code>linux-x86</code>, <code>linux-x86_64</code>, <code>solaris-sparc</code>, <code>macosx</code>.
-	 * </li>
+	 * <li>If <code>true</code> the terminal is configured with no echo and stderr is redirected to a pipe
+	 * instead of the PTY.</li>
+	 * <li>If <code>false</code> the terminal is configured with echo and stderr is connected to the PTY. This
+	 * mode is best suited for use with a proper terminal emulation. Note that this mode might not be
+	 * supported on all platforms. Known platforms which support this mode are: <code>linux-x86</code>,
+	 * <code>linux-x86_64</code>, <code>solaris-sparc</code>, <code>macosx</code>.</li>
 	 * </ul>
 	 * </p>
 	 *
-	 * @param console  whether terminal is used with Eclipse console
-	 * @throws IOException  if the PTY could not be created
+	 * @param console
+	 *            whether terminal is used with Eclipse console
+	 * @throws IOException
+	 *             if the PTY could not be created
 	 * @since 5.2
 	 */
 	public PTY(boolean console) throws IOException {
 		this.console = console;
 
 		if (hasPTY) {
-			slave= openMaster(console);
+			slave = openMaster(console);
 		}
 
 		if (slave == null) {
@@ -121,14 +119,13 @@ public class PTY {
 	/**
 	 * Change terminal window size to given width and height.
 	 * <p>
-	 * This should only be used when the pseudo terminal is configured
-	 * for use with a terminal emulation, i.e. when {@link #isConsole()}
-	 * returns <code>false</code>.
+	 * This should only be used when the pseudo terminal is configured for use with a terminal emulation, i.e.
+	 * when {@link #isConsole()} returns <code>false</code>.
 	 * </p>
 	 * <p>
-	 * <strong>Note:</strong> This method may not be supported on all platforms.
-	 * Known platforms which support this method are:
-	 * <code>linux-x86</code>, <code>linux-x86_64</code>, <code>solaris-sparc</code>, <code>macosx</code>.
+	 * <strong>Note:</strong> This method may not be supported on all platforms. Known platforms which support
+	 * this method are: <code>linux-x86</code>, <code>linux-x86_64</code>, <code>solaris-sparc</code>,
+	 * <code>macosx</code>.
 	 * </p>
 	 *
 	 * @since 5.2
@@ -139,7 +136,8 @@ public class PTY {
 		} catch (UnsatisfiedLinkError ule) {
 			if (!setTerminalSizeErrorAlreadyLogged) {
 				setTerminalSizeErrorAlreadyLogged = true;
-				CCorePlugin.log(CCorePlugin.getResourceString("Util.exception.cannotSetTerminalSize"), ule); //$NON-NLS-1$
+				CCorePlugin.log(
+						CCorePlugin.getResourceString("Util.exception.cannotSetTerminalSize"), ule); //$NON-NLS-1$
 			}
 		}
 	}
@@ -157,14 +155,14 @@ public class PTY {
 
 	static {
 		try {
-      System.loadLibrary(LIBRARY_NAME); //$NON-NLS-1$
+			System.loadLibrary(LIBRARY_NAME);
 			hasPTY = true;
 		} catch (SecurityException e) {
 			// Comment out it worries the users too much
-			//CCorePlugin.log(e);
+			// CCorePlugin.log(e);
 		} catch (UnsatisfiedLinkError e) {
 			// Comment out it worries the users too much
-			//CCorePlugin.log(e);
+			// CCorePlugin.log(e);
 		}
 	}
 

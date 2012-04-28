@@ -35,7 +35,7 @@ public class ProcessFactory {
 			if (OS != null && OS.equals("windows 98")) { //$NON-NLS-1$
 				hasSpawner = false;
 			} else {
-				System.loadLibrary(Spawner.LIBRARY_NAME); //$NON-NLS-1$
+				System.loadLibrary(Spawner.LIBRARY_NAME);
 				hasSpawner = true;
 			}
 		} catch (SecurityException e) {

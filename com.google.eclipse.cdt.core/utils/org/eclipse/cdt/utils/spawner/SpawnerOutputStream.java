@@ -87,7 +87,7 @@ public class SpawnerOutputStream extends OutputStream {
 	private native int close0(int fd);
 
 	static {
-		System.loadLibrary(Spawner.LIBRARY_NAME); //$NON-NLS-1$
+		System.loadLibrary(Spawner.LIBRARY_NAME);
 	}
 
 }

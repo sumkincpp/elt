@@ -112,7 +112,7 @@ class SpawnerInputStream extends InputStream {
 	private native int available0(int fileDesc) throws IOException;
 
 	static {
-		System.loadLibrary(Spawner.LIBRARY_NAME); //$NON-NLS-1$
+		System.loadLibrary(Spawner.LIBRARY_NAME);
 	}
 
 

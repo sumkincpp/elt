@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 
 public class Spawner extends Process {
-  static final String LIBRARY_NAME = "gspawner";
+  static final String LIBRARY_NAME = "gspawner"; //$NON-NLS-1$
 
   public int NOOP = 0;
 	public int HUP = 1;
@@ -464,7 +464,7 @@ public class Spawner extends Process {
 
 	static {
 		try {
-			System.loadLibrary(LIBRARY_NAME); //$NON-NLS-1$
+			System.loadLibrary(LIBRARY_NAME);
 		} catch (SecurityException e) {
 			CCorePlugin.log(e);
 		} catch (UnsatisfiedLinkError e) {
