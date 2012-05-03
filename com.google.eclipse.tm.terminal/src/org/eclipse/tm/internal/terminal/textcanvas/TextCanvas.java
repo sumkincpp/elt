@@ -20,14 +20,8 @@ package org.eclipse.tm.internal.terminal.textcanvas;
 
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 
@@ -51,10 +45,10 @@ public class TextCanvas extends GridCanvas {
 	// than that minimum size, the backing store size remains at the minSize,
 	// and a scrollbar is shown instead. In reality, this has the following
 	// issues or effects today:
-	//  (a) Bug 281328: For very early data coming in before the widget is 
-	//      realized, the minSize determines into what initial grid that is 
+	//  (a) Bug 281328: For very early data coming in before the widget is
+	//      realized, the minSize determines into what initial grid that is
 	//      rendered. See also @link{#addResizeHandler(ResizeListener)}.
-	//  (b) Bug 294468: Since we have redraw and size computation problems 
+	//  (b) Bug 294468: Since we have redraw and size computation problems
 	//      with horizontal scrollers, for now the minColumns must be small
 	//      enough to avoid a horizontal scroller appearing in most cases.
 	//  (b) Bug 294327: since we have problems with the vertical scroller
@@ -67,13 +61,13 @@ public class TextCanvas extends GridCanvas {
 	//   - dumb terminals which expect 80x24 render garbled on small viewport.
 	// If bug 294468 were resolved, an 80 wide minSize would be preferrable
 	// since it allows switching the terminal viewport small/large as needed,
-	// without destroying the backing store. For a complete solution, 
+	// without destroying the backing store. For a complete solution,
 	// Bug 196462 tracks the request for a user-defined fixed-widow-size-mode.
 	private int fMinColumns=80;
 	private int fMinLines=4;
 	private boolean fCursorEnabled;
 	private boolean fResizing;
-	
+
 	/**
 	 * Create a new CellCanvas with the given SWT style bits.
 	 * (SWT.H_SCROLL and SWT.V_SCROLL are automatically added).
@@ -85,15 +79,19 @@ public class TextCanvas extends GridCanvas {
 		setCellHeight(fCellRenderer.getCellHeight());
 		fCellCanvasModel=model;
 		fCellCanvasModel.addCellCanvasModelListener(new ITextCanvasModelListener(){
-    	public void rangeChanged(int col, int line, int width, int height) {
+    	@Override
+      public void rangeChanged(int col, int line, int width, int height) {
     		repaintRange(col,line,width,height);
     	}
-    	public void dimensionsChanged(int cols, int rows) {
+    	@Override
+      public void dimensionsChanged(int cols, int rows) {
     		calculateGrid();
     	}
-    	public void terminalDataChanged() {
-    		if(isDisposed())
-    			return;
+    	@Override
+      public void terminalDataChanged() {
+    		if(isDisposed()) {
+          return;
+        }
     		// scroll to end (unless scroll lock is active)
     		if (!fResizing) {
     			calculateGrid();
@@ -103,43 +101,51 @@ public class TextCanvas extends GridCanvas {
     });
 		// let the cursor blink if the text canvas gets the focus...
 		addFocusListener(new FocusListener(){
-			public void focusGained(FocusEvent e) {
+			@Override
+      public void focusGained(FocusEvent e) {
 				fCellCanvasModel.setCursorEnabled(fCursorEnabled);
 			}
-			public void focusLost(FocusEvent e) {
+			@Override
+      public void focusLost(FocusEvent e) {
 				fCellCanvasModel.setCursorEnabled(false);
 			}});
 		addMouseListener(new MouseListener(){
-			public void mouseDoubleClick(MouseEvent e) {
+			@Override
+      public void mouseDoubleClick(MouseEvent e) {
 			}
-			public void mouseDown(MouseEvent e) {
+			@Override
+      public void mouseDown(MouseEvent e) {
 				if(e.button==1) { // left button
 					fDraggingStart=screenPointToCell(e.x, e.y);
 					fHasSelection=false;
 					if((e.stateMask&SWT.SHIFT)!=0) {
 						Point anchor=fCellCanvasModel.getSelectionAnchor();
-						if(anchor!=null)
-							fDraggingStart=anchor;
+						if(anchor!=null) {
+              fDraggingStart=anchor;
+            }
 					} else {
 						fCellCanvasModel.setSelectionAnchor(fDraggingStart);
 					}
 					fDraggingEnd=null;
 				}
 			}
-			public void mouseUp(MouseEvent e) {
+			@Override
+      public void mouseUp(MouseEvent e) {
 				if(e.button==1) { // left button
 					updateHasSelection(e);
-					if(fHasSelection)
-						setSelection(screenPointToCell(e.x, e.y));
-					else
-						fCellCanvasModel.setSelection(-1,-1,-1,-1);
+					if(fHasSelection) {
+            setSelection(screenPointToCell(e.x, e.y));
+          } else {
+            fCellCanvasModel.setSelection(-1,-1,-1,-1);
+          }
 					fDraggingStart=null;
 				}
 			}
 		});
 		addMouseMoveListener(new MouseMoveListener() {
 
-			public void mouseMove(MouseEvent e) {
+			@Override
+      public void mouseMove(MouseEvent e) {
 				if (fDraggingStart != null) {
 					updateHasSelection(e);
 					setSelection(screenPointToCell(e.x, e.y));
@@ -159,8 +165,9 @@ public class TextCanvas extends GridCanvas {
 	private void updateHasSelection(MouseEvent e) {
 		if(fDraggingStart!=null) {
 			Point p=screenPointToCell(e.x, e.y);
-			if(fDraggingStart.x!=p.x||fDraggingStart.y!=p.y)
-				fHasSelection=true;
+			if(fDraggingStart.x!=p.x||fDraggingStart.y!=p.y) {
+        fHasSelection=true;
+      }
 		}
 	}
 
@@ -180,13 +187,15 @@ public class TextCanvas extends GridCanvas {
 	}
 
 	int compare(Point p1, Point p2) {
-		if (p1.equals(p2))
-			return 0;
+		if (p1.equals(p2)) {
+      return 0;
+    }
 		if (p1.y == p2.y) {
-			if (p1.x > p2.x)
-				return 1;
-			else
-				return -1;
+			if (p1.x > p2.x) {
+        return 1;
+      } else {
+        return -1;
+      }
 		}
 		if (p1.y > p2.y) {
 			return 1;
@@ -237,8 +246,9 @@ public class TextCanvas extends GridCanvas {
 					lines=bonds.height/cellHeight;
 					columns=bonds.width/cellWidth;
 				}
-				if(lines<fMinLines)
-					lines=fMinLines;
+				if(lines<fMinLines) {
+          lines=fMinLines;
+        }
 				fResizeListener.sizeChanged(lines, columns);
 			}
 		}
@@ -246,7 +256,8 @@ public class TextCanvas extends GridCanvas {
 		calculateGrid();
 	}
 
-	protected void onResize() {
+	@Override
+  protected void onResize() {
 		fResizing = true;
 		try {
 			onResize(false);
@@ -264,8 +275,9 @@ public class TextCanvas extends GridCanvas {
 			if (fResizing) {
 				// scroll to end if view port was near last line
 				Rectangle viewRect = getViewRectangle();
-				if (virtualBounds.height - (viewRect.y + viewRect.height) < getCellHeight() * 2)
-					scrollToEnd();
+				if (virtualBounds.height - (viewRect.y + viewRect.height) < getCellHeight() * 2) {
+          scrollToEnd();
+        }
 			}
 		} finally {
 			setRedraw(true);
@@ -304,20 +316,25 @@ public class TextCanvas extends GridCanvas {
 		Rectangle r=new Rectangle(origin.x,origin.y,width*getCellWidth(),height*getCellHeight());
 		repaint(r);
 	}
-	protected void drawLine(GC gc, int line, int x, int y, int colFirst, int colLast) {
+	@Override
+  protected void drawLine(GC gc, int line, int x, int y, int colFirst, int colLast) {
 		fCellRenderer.drawLine(fCellCanvasModel, gc,line,x,y,colFirst, colLast);
 	}
-	protected Color getTerminalBackgroundColor() {
+	@Override
+  protected Color getTerminalBackgroundColor() {
 		return fCellRenderer.getDefaultBackgroundColor();
 	}
-	protected void visibleCellRectangleChanged(int x, int y, int width, int height) {
+	@Override
+  protected void visibleCellRectangleChanged(int x, int y, int width, int height) {
 		fCellCanvasModel.setVisibleRectangle(y,x,height,width);
 		update();
 	}
-	protected int getCols() {
+	@Override
+  protected int getCols() {
 		return fCellCanvasModel.getTerminalText().getWidth();
 	}
-	protected int getRows() {
+	@Override
+  protected int getRows() {
 		return fCellCanvasModel.getTerminalText().getHeight();
 	}
 	public String getSelectionText() {
@@ -351,7 +368,9 @@ public class TextCanvas extends GridCanvas {
 	 */
 	public void addResizeHandler(ResizeListener listener) {
 		if(fResizeListener!=null)
-			throw new IllegalArgumentException("There can be at most one listener at the moment!"); //$NON-NLS-1$
+     {
+      throw new IllegalArgumentException("There can be at most one listener at the moment!"); //$NON-NLS-1$
+    }
 		fResizeListener=listener;
 
 		// Bug 281328: [terminal] The very first few characters might be missing in
@@ -402,11 +421,13 @@ public class TextCanvas extends GridCanvas {
 
   public void setColors(RGB background, RGB foreground) {
     fCellRenderer.setColors(background, foreground);
+    redraw();
   }
-  
+
   @Override public void setFont(Font font) {
     super.setFont(font);
     fCellRenderer.setFont(font);
+    redraw();
   }
 }
 
