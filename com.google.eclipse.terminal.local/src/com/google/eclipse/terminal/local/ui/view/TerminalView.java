@@ -10,7 +10,7 @@ package com.google.eclipse.terminal.local.ui.view;
 
 import static com.google.eclipse.terminal.local.Activator.*;
 import static com.google.eclipse.terminal.local.ui.preferences.ColorsAndFontsPreferences.*;
-import static com.google.eclipse.terminal.local.ui.preferences.GeneralPreferences.closeViewOnExit;
+import static com.google.eclipse.terminal.local.ui.preferences.GeneralPreferences.*;
 import static com.google.eclipse.terminal.local.ui.util.Displays.runInDisplayThread;
 import static com.google.eclipse.terminal.local.ui.view.Messages.defaultViewTitle;
 import static com.google.eclipse.terminal.local.util.Platform.userHomeDirectory;
@@ -30,7 +30,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
 
 import com.google.eclipse.terminal.local.core.connector.LifeCycleListener;
-import com.google.eclipse.terminal.local.ui.preferences.AbstractColorsAndFontsPreferencesChangeListener;
+import com.google.eclipse.terminal.local.ui.preferences.*;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
@@ -42,6 +42,7 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   private static final String VIEW_ID = "com.google.eclipse.terminal.local.localTerminalView";
 
   private IPropertyChangeListener colorPreferencesChangeListener;
+  private IPropertyChangeListener generalPreferencesChangeListener;
   private IPropertyChangeListener textFontChangeListener;
   private IMemento savedState;
   private TerminalWidget terminalWidget;
@@ -114,6 +115,13 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     };
     preferenceStore().addPropertyChangeListener(colorPreferencesChangeListener);
     updateColors();
+    generalPreferencesChangeListener = new AbstractGeneralPreferencesListener() {
+      @Override protected void onBufferLineCountChanged() {
+        updateBufferLineCount();
+      }
+    };
+    preferenceStore().addPropertyChangeListener(generalPreferencesChangeListener);
+    updateBufferLineCount();
     textFontChangeListener = new IPropertyChangeListener() {
       @Override public void propertyChange(PropertyChangeEvent event) {
         if (TEXT_FONT.equals(event.getProperty())) {
@@ -152,6 +160,10 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
 
   private void setFont(Font font) {
     terminalWidget.setFont(font);
+  }
+
+  private void updateBufferLineCount() {
+    terminalWidget.setBufferLineCount(bufferLineCount());
   }
 
   private void connectUsingSavedState() {

@@ -20,18 +20,11 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 class TerminalOutputListener implements IStreamListener {
   private final PrintStream printStream;
 
-  private boolean hasOutput;
-
   TerminalOutputListener(ITerminalControl control) throws UnsupportedEncodingException {
     printStream = new PrintStream(control.getRemoteToTerminalOutputStream(), true, LocalTerminalConnector.ENCODING);
   }
 
   @Override public void streamAppended(String text, IStreamMonitor monitor) {
     printStream.print(text);
-    hasOutput = !text.isEmpty();
-  }
-
-  boolean hasOutput() {
-    return hasOutput;
   }
 }

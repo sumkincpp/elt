@@ -136,6 +136,10 @@ class TerminalWidget extends Composite {
     terminalControl.setFont(font);
   }
 
+  void setBufferLineCount(int lineCount) {
+    terminalControl.setBufferLineLimit(lineCount);
+  }
+
   @Override public boolean setFocus() {
     return terminalControl.setFocus();
   }

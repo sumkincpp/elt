@@ -15,8 +15,8 @@ import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*
  * @author alruiz@google.com (Alex Ruiz)
  */
 public final class GeneralPreferences {
-  public static boolean bufferLineCount() {
-    return preferenceStore().getBoolean(BUFFER_LINE_COUNT);
+  public static int bufferLineCount() {
+    return preferenceStore().getInt(BUFFER_LINE_COUNT);
   }
 
   public static boolean closeViewOnExit() {
