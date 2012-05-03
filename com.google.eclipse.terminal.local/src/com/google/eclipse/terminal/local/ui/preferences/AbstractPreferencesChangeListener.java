@@ -28,8 +28,8 @@ public abstract class AbstractPreferencesChangeListener implements IPropertyChan
       onFontChanged();
     }
   }
-  protected
-  abstract void onBufferLineCountChanged();
+
+  protected abstract void onBufferLineCountChanged();
 
   protected abstract void onColorChanged();
 
