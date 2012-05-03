@@ -30,7 +30,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
 
 import com.google.eclipse.terminal.local.core.connector.LifeCycleListener;
-import com.google.eclipse.terminal.local.ui.preferences.*;
+import com.google.eclipse.terminal.local.ui.preferences.AbstractPreferencesChangeListener;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
@@ -41,8 +41,7 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
 
   private static final String VIEW_ID = "com.google.eclipse.terminal.local.localTerminalView";
 
-  private IPropertyChangeListener colorPreferencesChangeListener;
-  private IPropertyChangeListener generalPreferencesChangeListener;
+  private IPropertyChangeListener preferencesChangeListener;
   private IPropertyChangeListener textFontChangeListener;
   private IMemento savedState;
   private TerminalWidget terminalWidget;
@@ -104,7 +103,11 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     });
     IViewSite viewSite = getViewSite();
     terminalWidget.setUpGlobalEditActionHandlers(viewSite.getActionBars());
-    colorPreferencesChangeListener = new AbstractColorsAndFontsPreferencesChangeListener() {
+    preferencesChangeListener = new AbstractPreferencesChangeListener() {
+      @Override protected void onBufferLineCountChanged() {
+        updateBufferLineCount();
+      }
+
       @Override protected void onColorChanged() {
         updateColors();
       }
@@ -113,15 +116,9 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
         updateFont();
       }
     };
-    preferenceStore().addPropertyChangeListener(colorPreferencesChangeListener);
-    updateColors();
-    generalPreferencesChangeListener = new AbstractGeneralPreferencesListener() {
-      @Override protected void onBufferLineCountChanged() {
-        updateBufferLineCount();
-      }
-    };
-    preferenceStore().addPropertyChangeListener(generalPreferencesChangeListener);
+    preferenceStore().addPropertyChangeListener(preferencesChangeListener);
     updateBufferLineCount();
+    updateColors();
     textFontChangeListener = new IPropertyChangeListener() {
       @Override public void propertyChange(PropertyChangeEvent event) {
         if (TEXT_FONT.equals(event.getProperty())) {
@@ -194,8 +191,8 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   }
 
   @Override public void dispose() {
-    if (colorPreferencesChangeListener != null) {
-      preferenceStore().removePropertyChangeListener(colorPreferencesChangeListener);
+    if (preferencesChangeListener != null) {
+      preferenceStore().removePropertyChangeListener(preferencesChangeListener);
     }
     if (textFontChangeListener != null) {
       JFaceResources.getFontRegistry().removeListener(textFontChangeListener);

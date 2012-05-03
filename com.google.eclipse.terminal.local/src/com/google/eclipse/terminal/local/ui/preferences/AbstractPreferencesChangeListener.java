@@ -15,9 +15,12 @@ import org.eclipse.jface.util.*;
 /**
  * @author alruiz@google.com (Alex Ruiz)
  */
-public abstract class AbstractColorsAndFontsPreferencesChangeListener implements IPropertyChangeListener {
+public abstract class AbstractPreferencesChangeListener implements IPropertyChangeListener {
   @Override public final void propertyChange(PropertyChangeEvent event) {
     String property = event.getProperty();
+    if (BUFFER_LINE_COUNT.equals(property)) {
+      onBufferLineCountChanged();
+    }
     if (BACKGROUND_COLOR.equals(property) || FOREGROUND_COLOR.equals(property)) {
       onColorChanged();
     }
@@ -25,6 +28,8 @@ public abstract class AbstractColorsAndFontsPreferencesChangeListener implements
       onFontChanged();
     }
   }
+  protected
+  abstract void onBufferLineCountChanged();
 
   protected abstract void onColorChanged();
 
