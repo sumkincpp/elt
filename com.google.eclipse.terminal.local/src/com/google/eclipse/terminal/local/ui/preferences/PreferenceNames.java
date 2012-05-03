@@ -12,6 +12,7 @@ package com.google.eclipse.terminal.local.ui.preferences;
  * @author alruiz@google.com (Alex Ruiz)
  */
 final class PreferenceNames {
+  static final String BUFFER_LINE_COUNT = "bufferLineCount";
   static final String CLOSE_VIEW_ON_EXIT = "exitViewOnExit";
   static final String BACKGROUND_COLOR = "backgroundColor";
   static final String FOREGROUND_COLOR = "foregroundColor";

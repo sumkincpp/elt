@@ -9,12 +9,16 @@
 package com.google.eclipse.terminal.local.ui.preferences;
 
 import static com.google.eclipse.terminal.local.Activator.preferenceStore;
-import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.CLOSE_VIEW_ON_EXIT;
+import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
  */
 public final class GeneralPreferences {
+  public static boolean bufferLineCount() {
+    return preferenceStore().getBoolean(BUFFER_LINE_COUNT);
+  }
+
   public static boolean closeViewOnExit() {
     return preferenceStore().getBoolean(CLOSE_VIEW_ON_EXIT);
   }
