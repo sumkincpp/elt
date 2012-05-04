@@ -24,7 +24,10 @@ import org.eclipse.ui.*;
  * @author alruiz@google.com (Alex Ruiz)
  */
 public class RootPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-  private static final String INVALID_BUFFER_LINE_COUNT_MESSAGE = NLS.bind(invalidBufferLineCount, 0, Integer.MAX_VALUE);
+  private static final int MINIMUM_BUFFER_LINE_COUNT = 100;
+  private static final int MAXIMUM_BUFFER_LINE_COUNT = 50000;
+  private static final String INVALID_BUFFER_LINE_COUNT_MESSAGE =
+      NLS.bind(invalidBufferLineCount, MINIMUM_BUFFER_LINE_COUNT, MAXIMUM_BUFFER_LINE_COUNT);
 
   private Button btnCloseViewOnExit;
   private Text txtBufferLineCount;
@@ -59,7 +62,7 @@ public class RootPreferencePage extends PreferencePage implements IWorkbenchPref
           setInvalid(INVALID_BUFFER_LINE_COUNT_MESSAGE);
           return;
         }
-        if (newBufferLineCount < 0) {
+        if (newBufferLineCount < MINIMUM_BUFFER_LINE_COUNT || newBufferLineCount > MAXIMUM_BUFFER_LINE_COUNT) {
           setInvalid(INVALID_BUFFER_LINE_COUNT_MESSAGE);
           return;
         }
