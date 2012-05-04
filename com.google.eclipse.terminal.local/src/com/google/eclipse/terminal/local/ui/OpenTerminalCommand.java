@@ -21,8 +21,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class OpenTerminalCommand extends AbstractHandler {
 
-  @Override
-  public Object execute(ExecutionEvent event) {
+  @Override public Object execute(ExecutionEvent event) {
     ISelection selection = HandlerUtil.getCurrentSelection(event);
     IResource target = resourceFrom(selection);
     if (target != null) {
@@ -38,8 +37,7 @@ public class OpenTerminalCommand extends AbstractHandler {
     if (!(selection instanceof IStructuredSelection)) {
       return null;
     }
-    IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-    Object o = structuredSelection.getFirstElement();
+    Object o = ((IStructuredSelection) selection).getFirstElement();
     if (!(o instanceof IAdaptable)) {
       return null;
     }
