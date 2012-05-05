@@ -8,10 +8,14 @@
  */
 package com.google.eclipse.terminal.local;
 
+import static com.google.eclipse.terminal.local.ImageKeys.SCROLL_LOCK;
 import static org.eclipse.core.runtime.IStatus.*;
+
+import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -35,12 +39,21 @@ public class Activator extends AbstractUIPlugin {
     super.stop(context);
   }
 
+  @Override protected void initializeImageRegistry(ImageRegistry registry) {
+    URL scrollLockImageUrl = instance().getBundle().getEntry("icons/scroll_lock.gif");
+    registry.put(SCROLL_LOCK, ImageDescriptor.createFromURL(scrollLockImageUrl));
+  }
+
   public static void log(String message, Throwable cause) {
     log(new Status(ERROR, PLUGIN_ID, OK, message, cause));
   }
 
   public static void log(IStatus status) {
     instance().getLog().log(status);
+  }
+
+  public static ImageDescriptor imageDescriptor(String key) {
+    return instance().getImageRegistry().getDescriptor(key);
   }
 
   public static Activator instance() {

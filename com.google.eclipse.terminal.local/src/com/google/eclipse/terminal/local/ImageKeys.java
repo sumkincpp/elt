@@ -6,21 +6,13 @@
  *
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package com.google.eclipse.terminal.local.ui.view;
-
-import org.eclipse.osgi.util.NLS;
+package com.google.eclipse.terminal.local;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
  */
-public class Messages extends NLS {
-  public static String defaultViewTitle;
-  public static String scrollLock;
+public final class ImageKeys {
+  public static final String SCROLL_LOCK = "scrollLock";
 
-  static {
-    Class<Messages> type = Messages.class;
-    NLS.initializeMessages(type.getName(), type);
-  }
-
-  private Messages() {}
+  private ImageKeys() {}
 }

@@ -9,16 +9,18 @@
 package com.google.eclipse.terminal.local.ui.view;
 
 import static com.google.eclipse.terminal.local.Activator.*;
+import static com.google.eclipse.terminal.local.ImageKeys.SCROLL_LOCK;
 import static com.google.eclipse.terminal.local.ui.preferences.ColorsAndFontsPreferences.*;
 import static com.google.eclipse.terminal.local.ui.preferences.GeneralPreferences.*;
 import static com.google.eclipse.terminal.local.ui.util.Displays.runInDisplayThread;
-import static com.google.eclipse.terminal.local.ui.view.Messages.defaultViewTitle;
+import static com.google.eclipse.terminal.local.ui.view.Messages.*;
 import static com.google.eclipse.terminal.local.util.Platform.userHomeDirectory;
 import static org.eclipse.core.runtime.Path.fromOSString;
 import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
 import static org.eclipse.ui.IWorkbenchPage.VIEW_ACTIVATE;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
@@ -36,6 +38,7 @@ import com.google.eclipse.terminal.local.ui.preferences.AbstractPreferencesChang
  * @author alruiz@google.com (Alex Ruiz)
  */
 public class TerminalView extends ViewPart implements LifeCycleListener {
+  private static final String SCROLL_LOCK_ENABLED = "scrollLock";
   private static final String TITLE_STATE_TYPE = "title";
   private static final String WORKING_DIRECTORY_STATE_TYPE = "workingDirectory";
 
@@ -46,6 +49,8 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   private IMemento savedState;
   private TerminalWidget terminalWidget;
   private IPath workingDirectory;
+
+  private Action scrollLockAction;
 
   public static void openTerminalView(IPath workingDirectory) {
     IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -77,6 +82,7 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   }
 
   @Override public void saveState(IMemento memento) {
+    saveState(memento, SCROLL_LOCK_ENABLED, String.valueOf(terminalWidget.isScrollLockEnabled()));
     saveState(memento, TITLE_STATE_TYPE, getPartName());
     saveState(memento, WORKING_DIRECTORY_STATE_TYPE, workingDirectory.toOSString());
   }
@@ -130,7 +136,10 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     };
     JFaceResources.getFontRegistry().addListener(textFontChangeListener);
     updateFont();
+    scrollLockAction = new ScrollLockAction();
+    setupLocalToolBars();
     if (savedState != null) {
+      updateScrollLockUsingSavedState();
       connectUsingSavedState();
       return;
     }
@@ -138,6 +147,7 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
       setPartName(defaultViewTitle);
       open(userHomeDirectory());
     }
+    enableScrollLock(scrollLockAction.isChecked());
   }
 
   private void updateColors() {
@@ -161,6 +171,25 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
 
   private void updateBufferLineCount() {
     terminalWidget.setBufferLineCount(bufferLineCount());
+  }
+
+  private void setupLocalToolBars() {
+    IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+    toolBarManager.add(scrollLockAction);
+  }
+
+  private void updateScrollLockUsingSavedState() {
+    boolean newValue = Boolean.valueOf(savedState(SCROLL_LOCK_ENABLED));
+    enableScrollLockAndUpdateAction(newValue);
+  }
+
+  private void enableScrollLockAndUpdateAction(boolean enabled) {
+    enableScrollLock(enabled);
+    scrollLockAction.setChecked(enabled);
+  }
+
+  private void enableScrollLock(boolean enabled) {
+    terminalWidget.enableScrollLock(enabled);
   }
 
   private void connectUsingSavedState() {
@@ -198,5 +227,18 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
       JFaceResources.getFontRegistry().removeListener(textFontChangeListener);
     }
     super.dispose();
+  }
+
+  private class ScrollLockAction extends Action {
+    ScrollLockAction() {
+      super(scrollLock, AS_RADIO_BUTTON);
+      setChecked(false);
+      setImageDescriptor(imageDescriptor(SCROLL_LOCK));
+    }
+
+    @Override public void run() {
+      boolean newValue = !terminalWidget.isScrollLockEnabled();
+      enableScrollLockAndUpdateAction(newValue);
+    }
   }
 }

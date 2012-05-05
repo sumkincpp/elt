@@ -144,6 +144,14 @@ class TerminalWidget extends Composite {
     return terminalControl.setFocus();
   }
 
+  public boolean isScrollLockEnabled() {
+    return terminalControl.isScrollLock();
+  }
+
+  void enableScrollLock(boolean enabled) {
+    terminalControl.setScrollLock(enabled);
+  }
+
   private static class TerminalListener implements ITerminalListener {
     ITerminalListener delegate;
 

@@ -6,7 +6,7 @@
  *
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package com.google.eclipse.terminal.local.ui;
+package com.google.eclipse.terminal.local.ui.command;
 
 import static com.google.eclipse.terminal.local.ui.view.TerminalView.openTerminalView;
 
