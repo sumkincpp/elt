@@ -15,6 +15,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
   public static String defaultViewTitle;
+  public static String newLocalTerminal;
   public static String scrollLock;
 
   static {

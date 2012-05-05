@@ -9,7 +9,7 @@
 package com.google.eclipse.terminal.local.ui.view;
 
 import static com.google.eclipse.terminal.local.Activator.*;
-import static com.google.eclipse.terminal.local.ImageKeys.SCROLL_LOCK;
+import static com.google.eclipse.terminal.local.ImageKeys.*;
 import static com.google.eclipse.terminal.local.ui.preferences.ColorsAndFontsPreferences.*;
 import static com.google.eclipse.terminal.local.ui.preferences.GeneralPreferences.*;
 import static com.google.eclipse.terminal.local.ui.util.Displays.runInDisplayThread;
@@ -18,6 +18,8 @@ import static com.google.eclipse.terminal.local.util.Platform.userHomeDirectory;
 import static org.eclipse.core.runtime.Path.fromOSString;
 import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
 import static org.eclipse.ui.IWorkbenchPage.VIEW_ACTIVATE;
+
+import java.util.UUID;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.*;
@@ -50,13 +52,19 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   private TerminalWidget terminalWidget;
   private IPath workingDirectory;
 
+  private Action newTerminalAction;
   private Action scrollLockAction;
 
   public static void openTerminalView(IPath workingDirectory) {
+    openTerminalView(null, workingDirectory);
+  }
+
+  private static void openTerminalView(String id, IPath workingDirectory) {
     IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
     try {
       String directoryName = workingDirectory.lastSegment();
-      TerminalView view = (TerminalView) page.showView(VIEW_ID, directoryName, VIEW_ACTIVATE);
+      String secondaryId = (id != null) ? id : directoryName;
+      TerminalView view = (TerminalView) page.showView(VIEW_ID, secondaryId, VIEW_ACTIVATE);
       view.setPartName(directoryName);
       view.open(workingDirectory);
     } catch (PartInitException e) {
@@ -136,8 +144,7 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     };
     JFaceResources.getFontRegistry().addListener(textFontChangeListener);
     updateFont();
-    scrollLockAction = new ScrollLockAction();
-    setupLocalToolBars();
+    setupToolBarActions();
     if (savedState != null) {
       updateScrollLockUsingSavedState();
       connectUsingSavedState();
@@ -173,8 +180,11 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     terminalWidget.setBufferLineCount(bufferLineCount());
   }
 
-  private void setupLocalToolBars() {
+  private void setupToolBarActions() {
     IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+    newTerminalAction = new NewTerminalAction();
+    toolBarManager.add(newTerminalAction);
+    scrollLockAction = new ScrollLockAction();
     toolBarManager.add(scrollLockAction);
   }
 
@@ -227,6 +237,17 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
       JFaceResources.getFontRegistry().removeListener(textFontChangeListener);
     }
     super.dispose();
+  }
+
+  private class NewTerminalAction extends Action {
+    NewTerminalAction() {
+      setImageDescriptor(imageDescriptor(NEW_TERMINAL));
+      setText(newLocalTerminal);
+    }
+
+    @Override public void run() {
+      openTerminalView(UUID.randomUUID().toString(), workingDirectory);
+    }
   }
 
   private class ScrollLockAction extends Action {

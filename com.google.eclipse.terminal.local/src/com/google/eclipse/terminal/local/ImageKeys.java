@@ -12,6 +12,7 @@ package com.google.eclipse.terminal.local;
  * @author alruiz@google.com (Alex Ruiz)
  */
 public final class ImageKeys {
+  public static final String NEW_TERMINAL = "newTerminal";
   public static final String SCROLL_LOCK = "scrollLock";
 
   private ImageKeys() {}

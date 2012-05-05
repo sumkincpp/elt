@@ -8,7 +8,7 @@
  */
 package com.google.eclipse.terminal.local;
 
-import static com.google.eclipse.terminal.local.ImageKeys.SCROLL_LOCK;
+import static com.google.eclipse.terminal.local.ImageKeys.*;
 import static org.eclipse.core.runtime.IStatus.*;
 
 import java.net.URL;
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -40,7 +40,10 @@ public class Activator extends AbstractUIPlugin {
   }
 
   @Override protected void initializeImageRegistry(ImageRegistry registry) {
-    URL scrollLockImageUrl = instance().getBundle().getEntry("icons/scroll_lock.gif");
+    Bundle bundle = instance().getBundle();
+    URL newTerminalImageUrl = bundle.getEntry("icons/new_terminal.gif");
+    registry.put(NEW_TERMINAL, ImageDescriptor.createFromURL(newTerminalImageUrl));
+    URL scrollLockImageUrl = bundle.getEntry("icons/scroll_lock.gif");
     registry.put(SCROLL_LOCK, ImageDescriptor.createFromURL(scrollLockImageUrl));
   }
 
