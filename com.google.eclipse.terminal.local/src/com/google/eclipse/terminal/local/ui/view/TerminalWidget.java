@@ -34,7 +34,8 @@ import com.google.eclipse.terminal.local.core.connector.*;
  * @author alruiz@google.com (Alex Ruiz)
  */
 class TerminalWidget extends Composite {
-  private static Pattern WHITE_SPACE_PATTERN = Pattern.compile("[\\s]+");
+  private static final String CRLF = "\r\n";
+  private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("[\\s]+");
 
   private final TerminalListener terminalListener = new TerminalListener();
 
@@ -42,6 +43,7 @@ class TerminalWidget extends Composite {
   private final EditActions editActions;
   private final LastCommandTracker lastCommandTracker;
 
+  private CommandListener commandListener;
   private LifeCycleListener lifeCycleListener;
 
   TerminalWidget(Composite parent, int style) {
@@ -166,9 +168,11 @@ class TerminalWidget extends Composite {
     terminalControl.setScrollLock(enabled);
   }
 
-  private class LastCommandTracker extends KeyAdapter implements IStreamListener {
-    private static final String CRLF = "\r\n";
+  void setCommandListener(CommandListener listener) {
+    commandListener = listener;
+  }
 
+  private class LastCommandTracker extends KeyAdapter implements IStreamListener {
     private final List<String> words = new ArrayList<String>();
 
     @Override public void streamAppended(String text, IStreamMonitor monitor) {
@@ -191,11 +195,17 @@ class TerminalWidget extends Composite {
       if (e.character == '\r') {
         int line = terminalControl.getCursorLine();
         String text = new String(terminalControl.getChars(line));
-        if (words.size() > 1) {
-          String prompt = words.get(0);
-          text = text.substring(prompt.length());
-          String command = WHITE_SPACE_PATTERN.split(text)[0];
-          System.out.println("command: " + command);
+        if (words.size() <= 1) {
+          return;
+        }
+        String prompt = words.get(0);
+        text = text.substring(prompt.length());
+        String[] actualInput = WHITE_SPACE_PATTERN.split(text);
+        if (actualInput.length != 0) {
+          String command = actualInput[0];
+          if (!command.isEmpty() && commandListener != null) {
+            commandListener.commandIssued(command);
+          }
         }
       }
     }

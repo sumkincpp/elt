@@ -46,6 +46,8 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
 
   private static final String VIEW_ID = "com.google.eclipse.terminal.local.localTerminalView";
 
+  private static final String VIEW_TITLE_FORMAT = "%s : %s";
+
   private IPropertyChangeListener preferencesChangeListener;
   private IPropertyChangeListener textFontChangeListener;
   private IMemento savedState;
@@ -103,6 +105,16 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
   @Override public void createPartControl(Composite parent) {
     terminalWidget = new TerminalWidget(parent, SWT.NONE);
     terminalWidget.setLifeCycleListener(this);
+    terminalWidget.setCommandListener(new CommandListener() {
+      @Override public void commandIssued(final String command) {
+        runInDisplayThread(new Runnable() {
+          @Override public void run() {
+            String title = String.format(VIEW_TITLE_FORMAT, workingDirectory.lastSegment(), command);
+            setPartName(title);
+          }
+        });
+      }
+    });
     terminalWidget.setTerminalListener(new ITerminalListener() {
       @Override public void setTerminalTitle(final String title) {
         runInDisplayThread(new Runnable() {
