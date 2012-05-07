@@ -11,13 +11,7 @@ package com.google.eclipse.terminal.local.ui.view;
 import static com.google.eclipse.terminal.local.core.connector.LocalTerminalConnector.createLocalTerminalConnector;
 import static org.eclipse.tm.internal.terminal.provisional.api.TerminalState.CONNECTING;
 
-import java.util.*;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.core.IStreamListener;
-import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.layout.*;
 import org.eclipse.swt.events.*;
@@ -34,16 +28,12 @@ import com.google.eclipse.terminal.local.core.connector.*;
  * @author alruiz@google.com (Alex Ruiz)
  */
 class TerminalWidget extends Composite {
-  private static final String CRLF = "\r\n";
-  private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("[\\s]+");
-
   private final TerminalListener terminalListener = new TerminalListener();
 
   private final VT100TerminalControl terminalControl;
   private final EditActions editActions;
   private final LastCommandTracker lastCommandTracker;
 
-  private CommandListener commandListener;
   private LifeCycleListener lifeCycleListener;
 
   TerminalWidget(Composite parent, int style) {
@@ -79,7 +69,7 @@ class TerminalWidget extends Composite {
         editActions.update();
       }
     });
-    lastCommandTracker = new LastCommandTracker();
+    lastCommandTracker = new LastCommandTracker(terminalControl);
     terminalTextControl.addKeyListener(lastCommandTracker);
   }
 
@@ -169,46 +159,7 @@ class TerminalWidget extends Composite {
   }
 
   void setCommandListener(CommandListener listener) {
-    commandListener = listener;
-  }
-
-  private class LastCommandTracker extends KeyAdapter implements IStreamListener {
-    private final List<String> words = new ArrayList<String>();
-
-    @Override public void streamAppended(String text, IStreamMonitor monitor) {
-      int charCount = text.length();
-      if (charCount == 0) {
-        return;
-      }
-      String word = text;
-      int index = text.lastIndexOf(CRLF);
-      if (index != -1) {
-        words.clear();
-        word = text.substring(index + CRLF.length(), charCount);
-      }
-      if (!word.isEmpty()) {
-        words.add(word);
-      }
-    }
-
-    @Override public void keyPressed(KeyEvent e) {
-      if (e.character == '\r') {
-        int line = terminalControl.getCursorLine();
-        String text = new String(terminalControl.getChars(line));
-        if (words.size() <= 1) {
-          return;
-        }
-        String prompt = words.get(0);
-        text = text.substring(prompt.length());
-        String[] actualInput = WHITE_SPACE_PATTERN.split(text);
-        if (actualInput.length != 0) {
-          String command = actualInput[0];
-          if (!command.isEmpty() && commandListener != null) {
-            commandListener.commandIssued(command);
-          }
-        }
-      }
-    }
+    lastCommandTracker.setCommandListener(listener);
   }
 
   private static class TerminalListener implements ITerminalListener {
