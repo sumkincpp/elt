@@ -11,7 +11,13 @@ package com.google.eclipse.terminal.local.ui.view;
 import static com.google.eclipse.terminal.local.core.connector.LocalTerminalConnector.createLocalTerminalConnector;
 import static org.eclipse.tm.internal.terminal.provisional.api.TerminalState.CONNECTING;
 
+import java.util.*;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.IStreamListener;
+import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.layout.*;
 import org.eclipse.swt.events.*;
@@ -28,10 +34,13 @@ import com.google.eclipse.terminal.local.core.connector.*;
  * @author alruiz@google.com (Alex Ruiz)
  */
 class TerminalWidget extends Composite {
+  private static Pattern WHITE_SPACE_PATTERN = Pattern.compile("[\\s]+");
+
   private final TerminalListener terminalListener = new TerminalListener();
 
   private final VT100TerminalControl terminalControl;
   private final EditActions editActions;
+  private final LastCommandTracker lastCommandTracker;
 
   private LifeCycleListener lifeCycleListener;
 
@@ -62,11 +71,14 @@ class TerminalWidget extends Composite {
         editActions.onMenuHidden();
       }
     });
-    terminalTextControl().addFocusListener(new FocusAdapter() {
+    Control terminalTextControl = terminalTextControl();
+    terminalTextControl.addFocusListener(new FocusAdapter() {
       @Override public void focusGained(FocusEvent e) {
         editActions.update();
       }
     });
+    lastCommandTracker = new LastCommandTracker();
+    terminalTextControl.addKeyListener(lastCommandTracker);
   }
 
   private Menu createContextMenu(MenuManager menuManager) {
@@ -89,6 +101,7 @@ class TerminalWidget extends Composite {
       return;
     }
     terminalControl.connectTerminal();
+    localTerminalConnector().addListenerToOutput(lastCommandTracker);
     attachLifeCycleListener();
   }
 
@@ -125,7 +138,8 @@ class TerminalWidget extends Composite {
   }
 
   private LocalTerminalConnector localTerminalConnector() {
-    return (LocalTerminalConnector) terminalControl.getTerminalConnector().getAdapter(LocalTerminalConnector.class);
+    Object connector = terminalControl.getTerminalConnector().getAdapter(LocalTerminalConnector.class);
+    return (LocalTerminalConnector) connector;
   }
 
   void setColors(RGB background, RGB foreground) {
@@ -144,12 +158,47 @@ class TerminalWidget extends Composite {
     return terminalControl.setFocus();
   }
 
-  public boolean isScrollLockEnabled() {
+  boolean isScrollLockEnabled() {
     return terminalControl.isScrollLock();
   }
 
   void enableScrollLock(boolean enabled) {
     terminalControl.setScrollLock(enabled);
+  }
+
+  private class LastCommandTracker extends KeyAdapter implements IStreamListener {
+    private static final String CRLF = "\r\n";
+
+    private final List<String> words = new ArrayList<String>();
+
+    @Override public void streamAppended(String text, IStreamMonitor monitor) {
+      int charCount = text.length();
+      if (charCount == 0) {
+        return;
+      }
+      String word = text;
+      int index = text.lastIndexOf(CRLF);
+      if (index != -1) {
+        words.clear();
+        word = text.substring(index + CRLF.length(), charCount);
+      }
+      if (!word.isEmpty()) {
+        words.add(word);
+      }
+    }
+
+    @Override public void keyPressed(KeyEvent e) {
+      if (e.character == '\r') {
+        int line = terminalControl.getCursorLine();
+        String text = new String(terminalControl.getChars(line));
+        if (words.size() > 1) {
+          String prompt = words.get(0);
+          text = text.substring(prompt.length());
+          String command = WHITE_SPACE_PATTERN.split(text)[0];
+          System.out.println("command: " + command);
+        }
+      }
+    }
   }
 
   private static class TerminalListener implements ITerminalListener {

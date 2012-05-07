@@ -429,5 +429,13 @@ public class TextCanvas extends GridCanvas {
     fCellRenderer.setFont(font);
     redraw();
   }
+
+  public int getCursorLine() {
+    return fCellCanvasModel.getCursorLine();
+  }
+
+  public char[] getChars(int line) {
+    return fCellCanvasModel.getTerminalText().getChars(line);
+  }
 }
 

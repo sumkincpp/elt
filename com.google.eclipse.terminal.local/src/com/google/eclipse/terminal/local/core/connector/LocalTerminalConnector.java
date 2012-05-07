@@ -19,6 +19,7 @@ import static org.eclipse.tm.internal.terminal.provisional.api.TerminalState.*;
 import java.io.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.internal.core.StreamsProxy;
 import org.eclipse.osgi.util.NLS;
@@ -81,8 +82,7 @@ public class LocalTerminalConnector extends TerminalConnectorImpl implements Lif
       pseudoTerminal.launch();
       streamsProxy = new StreamsProxy(pseudoTerminal.systemProcess(), ENCODING);
       terminalToRemoteStream = new BufferedOutputStream(new TerminalOutputStream(streamsProxy, ENCODING), 1024);
-      setUpOutput(control, streamsProxy.getOutputStreamMonitor());
-      setUpOutput(control, streamsProxy.getErrorStreamMonitor());
+      addListeners(control, streamsProxy.getOutputStreamMonitor(), streamsProxy.getErrorStreamMonitor());
       if (streamsProxy != null) {
         control.setState(CONNECTED);
         return;
@@ -102,10 +102,22 @@ public class LocalTerminalConnector extends TerminalConnectorImpl implements Lif
     return (file.isDirectory()) ? file : null;
   }
 
-  private void setUpOutput(ITerminalControl control, IStreamMonitor outputMonitor) throws UnsupportedEncodingException {
-    TerminalOutputListener outputListener = new TerminalOutputListener(control);
-    outputMonitor.addListener(outputListener);
-    outputListener.streamAppended(outputMonitor.getContents(), outputMonitor);
+  private void addListeners(ITerminalControl control, IStreamMonitor...monitors) throws UnsupportedEncodingException {
+    for (IStreamMonitor monitor : monitors) {
+      addListener(monitor, new TerminalOutputListener(control));
+    }
+  }
+
+  public void addListenerToOutput(IStreamListener listener) {
+    if (streamsProxy != null) {
+      IStreamMonitor monitor = streamsProxy.getOutputStreamMonitor();
+      addListener(monitor, listener);
+    }
+  }
+
+  private void addListener(IStreamMonitor monitor, IStreamListener listener) {
+    monitor.addListener(listener);
+    listener.streamAppended(monitor.getContents(), monitor);
   }
 
   /** {@inheritDoc} */

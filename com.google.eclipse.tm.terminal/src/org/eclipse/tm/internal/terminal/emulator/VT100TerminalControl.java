@@ -1050,4 +1050,12 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
   public void setColors(RGB background, RGB foreground) {
     fCtlText.setColors(background, foreground);
   }
+
+  public int getCursorLine() {
+    return fCtlText.getCursorLine();
+  }
+
+  public char[] getChars(int line) {
+    return fCtlText.getChars(line);
+  }
 }

@@ -8,6 +8,8 @@
  */
 package com.google.eclipse.terminal.local.core.connector;
 
+import static com.google.eclipse.terminal.local.core.connector.LocalTerminalConnector.ENCODING;
+
 import java.io.*;
 
 import org.eclipse.debug.core.IStreamListener;
@@ -21,7 +23,7 @@ class TerminalOutputListener implements IStreamListener {
   private final PrintStream printStream;
 
   TerminalOutputListener(ITerminalControl control) throws UnsupportedEncodingException {
-    printStream = new PrintStream(control.getRemoteToTerminalOutputStream(), true, LocalTerminalConnector.ENCODING);
+    printStream = new PrintStream(control.getRemoteToTerminalOutputStream(), true, ENCODING);
   }
 
   @Override public void streamAppended(String text, IStreamMonitor monitor) {
