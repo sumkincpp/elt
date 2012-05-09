@@ -20,7 +20,8 @@ import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
  * @author alruiz@google.com (Alex Ruiz)
  */
 class LastCommandTracker extends KeyAdapter implements IStreamListener {
-  private static final String CRLF = "\r\n";
+  private static final String CR_LF_CR = "\r\n\r";
+  private static final String CR_LF = "\r\n";
   private static final Pattern WHITE_SPACE_PATTERN = Pattern.compile("[\\s]+");
 
   private final List<String> words = new ArrayList<String>();
@@ -42,10 +43,15 @@ class LastCommandTracker extends KeyAdapter implements IStreamListener {
       return;
     }
     String word = text;
-    int index = text.lastIndexOf(CRLF);
+    if (word.endsWith(CR_LF_CR)) {
+      // this happens before a line gets wrapped
+      word = word.substring(0, charCount - CR_LF_CR.length());
+    }
+    // this happens after a line gets wrapped
+    int index = word.lastIndexOf(CR_LF);
     if (index != -1) {
       words.clear();
-      word = text.substring(index + CRLF.length(), charCount);
+      word = word.substring(index + CR_LF.length(), charCount);
     }
     if (!word.isEmpty()) {
       words.add(word);

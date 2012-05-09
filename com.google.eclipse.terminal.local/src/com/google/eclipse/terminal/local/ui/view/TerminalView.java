@@ -40,7 +40,7 @@ import com.google.eclipse.terminal.local.ui.preferences.AbstractPreferencesChang
 /**
  * @author alruiz@google.com (Alex Ruiz)
  */
-public class TerminalView extends ViewPart implements LifeCycleListener {
+public class TerminalView extends ViewPart {
   private static final String SCROLL_LOCK_ENABLED = "scrollLock";
   private static final String TITLE_STATE_TYPE = "title";
   private static final String WORKING_DIRECTORY_STATE_TYPE = "workingDirectory";
@@ -75,18 +75,6 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
     }
   }
 
-  @Override public void executionFinished() {
-    if (closeViewOnExit() && terminalWidget != null && !terminalWidget.isDisposed()) {
-      // must run in UI thread.
-      terminalWidget.getDisplay().asyncExec(new Runnable() {
-        @Override public void run() {
-          IWorkbenchPartSite site = getSite();
-          site.getPage().hideView((IViewPart) site.getPart());
-        }
-      });
-    }
-  }
-
   @Override public void init(IViewSite site, IMemento memento) throws PartInitException {
     super.init(site, memento);
     savedState = memento;
@@ -105,11 +93,15 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
 
   @Override public void createPartControl(Composite parent) {
     terminalWidget = new TerminalWidget(parent, SWT.NONE);
-    terminalWidget.setLifeCycleListener(this);
     terminalWidget.setCommandListener(new CommandListener() {
-      @Override public void commandIssued(final String command) {
+      @Override public void commandIssued(String command) {
         String title = String.format(VIEW_TITLE_FORMAT, workingDirectory.lastSegment(), command);
         updatePartName(title);
+      }
+    });
+    terminalWidget.setLifeCycleListener(new LifeCycleListener() {
+      @Override public void executionFinished() {
+        closeViewOnExitIfPossible();
       }
     });
     terminalWidget.setTerminalListener(new ITerminalListener() {
@@ -160,6 +152,18 @@ public class TerminalView extends ViewPart implements LifeCycleListener {
       open(userHomeDirectory());
     }
     enableScrollLock(scrollLockAction.isChecked());
+  }
+
+  private void closeViewOnExitIfPossible() {
+    if (closeViewOnExit() && terminalWidget != null && !terminalWidget.isDisposed()) {
+      // must run in UI thread.
+      terminalWidget.getDisplay().asyncExec(new Runnable() {
+        @Override public void run() {
+          IWorkbenchPartSite site = getSite();
+          site.getPage().hideView((IViewPart) site.getPart());
+        }
+      });
+    }
   }
 
   private void updateColors() {
