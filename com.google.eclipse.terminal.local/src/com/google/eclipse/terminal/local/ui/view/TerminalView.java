@@ -47,8 +47,6 @@ public class TerminalView extends ViewPart {
 
   private static final String VIEW_ID = "com.google.eclipse.terminal.local.localTerminalView";
 
-  private static final String VIEW_TITLE_FORMAT = "%s : %s";
-
   private IPropertyChangeListener preferencesChangeListener;
   private IPropertyChangeListener textFontChangeListener;
   private IMemento savedState;
@@ -93,12 +91,6 @@ public class TerminalView extends ViewPart {
 
   @Override public void createPartControl(Composite parent) {
     terminalWidget = new TerminalWidget(parent, SWT.NONE);
-    terminalWidget.setCommandListener(new CommandListener() {
-      @Override public void commandIssued(String command) {
-        String title = String.format(VIEW_TITLE_FORMAT, workingDirectory.lastSegment(), command);
-        updatePartName(title);
-      }
-    });
     terminalWidget.setLifeCycleListener(new LifeCycleListener() {
       @Override public void executionFinished() {
         closeViewOnExitIfPossible();

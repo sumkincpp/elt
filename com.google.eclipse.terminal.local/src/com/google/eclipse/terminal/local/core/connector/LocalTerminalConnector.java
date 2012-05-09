@@ -108,13 +108,6 @@ public class LocalTerminalConnector extends TerminalConnectorImpl implements Lif
     }
   }
 
-  public void addListenerToOutput(IStreamListener listener) {
-    if (streamsProxy != null) {
-      IStreamMonitor monitor = streamsProxy.getOutputStreamMonitor();
-      addListener(monitor, listener);
-    }
-  }
-
   private void addListener(IStreamMonitor monitor, IStreamListener listener) {
     monitor.addListener(listener);
     listener.streamAppended(monitor.getContents(), monitor);

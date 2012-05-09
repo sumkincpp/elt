@@ -32,7 +32,6 @@ class TerminalWidget extends Composite {
 
   private final VT100TerminalControl terminalControl;
   private final EditActions editActions;
-  private final LastCommandTracker lastCommandTracker;
 
   private LifeCycleListener lifeCycleListener;
 
@@ -69,8 +68,6 @@ class TerminalWidget extends Composite {
         editActions.update();
       }
     });
-    lastCommandTracker = new LastCommandTracker(terminalControl);
-    terminalTextControl.addKeyListener(lastCommandTracker);
   }
 
   private Menu createContextMenu(MenuManager menuManager) {
@@ -93,7 +90,6 @@ class TerminalWidget extends Composite {
       return;
     }
     terminalControl.connectTerminal();
-    localTerminalConnector().addListenerToOutput(lastCommandTracker);
     attachLifeCycleListener();
   }
 
@@ -156,10 +152,6 @@ class TerminalWidget extends Composite {
 
   void enableScrollLock(boolean enabled) {
     terminalControl.setScrollLock(enabled);
-  }
-
-  void setCommandListener(CommandListener listener) {
-    lastCommandTracker.setCommandListener(listener);
   }
 
   private static class TerminalListener implements ITerminalListener {
