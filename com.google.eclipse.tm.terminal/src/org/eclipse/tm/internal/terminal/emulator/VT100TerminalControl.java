@@ -35,10 +35,13 @@ package org.eclipse.tm.internal.terminal.emulator;
 
 import java.io.*;
 import java.net.SocketException;
+import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
@@ -572,7 +575,24 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		snapshot.updateSnapshot(false);
 		ITextCanvasModel canvasModel=new PollingTextCanvasModel(snapshot);
 		fCtlText=new TextCanvas(fWndParent,canvasModel,SWT.NONE,new TextLineRenderer(fCtlText,canvasModel));
-
+		fCtlText.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseUp(MouseEvent e) {
+        Point p = fCtlText.screenPointToCell(e.x, e.y);
+        if (p == null) {
+          return;
+        }
+        List<IHyperlink> hyperlinks = fTerminalText.hyperlinksAt(p.y);
+        for (IHyperlink hyperlink : hyperlinks) {
+          IRegion region = hyperlink.getHyperlinkRegion();
+          int start = region.getOffset();
+          int end = start + region.getLength() - 1;
+          if (p.x >= start && p.x <= end) {
+            hyperlink.open();
+          }
+        }
+      }
+    });
 
 		fCtlText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

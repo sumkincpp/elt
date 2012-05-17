@@ -429,5 +429,9 @@ public class TextCanvas extends GridCanvas {
     fCellRenderer.setFont(font);
     redraw();
   }
+
+  @Override public Point screenPointToCell(int x, int y) {
+    return super.screenPointToCell(x, y);
+  }
 }
 

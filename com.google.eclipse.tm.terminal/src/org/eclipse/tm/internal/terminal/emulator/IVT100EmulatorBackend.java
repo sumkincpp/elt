@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
+import java.util.List;
+
+import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.tm.terminal.model.Style;
 
 public interface IVT100EmulatorBackend {
@@ -169,4 +172,5 @@ public interface IVT100EmulatorBackend {
 
 	int getColumns();
 
+	List<IHyperlink> hyperlinksAt(int line);
 }

@@ -11,7 +11,9 @@
 package org.eclipse.tm.internal.terminal.emulator;
 
 import java.io.PrintStream;
+import java.util.List;
 
+import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.tm.terminal.model.Style;
 
 public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
@@ -141,4 +143,8 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 		fBackend.setStyle(style);
 	}
 
+  @Override
+  public List<IHyperlink> hyperlinksAt(int line) {
+    return fBackend.hyperlinksAt(line);
+  }
 }

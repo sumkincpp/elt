@@ -17,10 +17,12 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.impl;
 
+import static org.eclipse.core.runtime.IStatus.ERROR;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.tm.internal.terminal.control.actions.ImageConsts;
@@ -80,5 +82,9 @@ public class TerminalPlugin extends AbstractUIPlugin {
 		URL url = TerminalPlugin.getDefault().getBundle().getEntry(relativePath);
 		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(url);
 		imageRegistry.put(strKey, imageDescriptor);
+	}
+	
+	public static void log(String message, Exception error) {
+	  getDefault().getLog().log(new Status(ERROR, PLUGIN_ID, message, error));
 	}
 }

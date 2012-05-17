@@ -1,18 +1,25 @@
 /*******************************************************************************
  * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Anton Leherbauer (Wind River) - [206329] Changing terminal size right after connect does not scroll properly
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
-import org.eclipse.tm.terminal.model.ITerminalTextData;
-import org.eclipse.tm.terminal.model.Style;
+import static java.util.Collections.emptyList;
+
+import java.util.*;
+
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.hyperlink.IHyperlink;
+import org.eclipse.tm.terminal.model.*;
+
+import com.google.eclipse.terminal.ui.hyperlink.*;
 
 /**
  *
@@ -26,7 +33,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 * {@link #widthInColumns} - 1. We track the cursor column using this field
 	 * to avoid having to recompute it repeatly using StyledText method calls.
 	 * <p>
-	 * 
+	 *
 	 * The StyledText widget that displays text has a vertical bar (called the
 	 * "caret") that appears _between_ character cells, but ANSI terminals have
 	 * the concept of a cursor that appears _in_ a character cell, so we need a
@@ -35,7 +42,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	 * class is that the cursor is logically in column N when the caret is
 	 * physically positioned immediately to the _left_ of column N.
 	 * <p>
-	 * 
+	 *
 	 * When fCursorColumn is N, the next character output to the terminal appears
 	 * in column N. When a character is output to the rightmost column on a
 	 * given line (column widthInColumns - 1), the cursor moves to column 0 on
@@ -52,14 +59,18 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	int fLines;
 	int fColumns;
 	final private ITerminalTextData fTerminal;
+
+	private final IHyperlinkFactory urlHyperlinkFactory = new HttpHyperlinkFactory();
+	private final Map<Integer, List<IHyperlink>> hyperlinks = new HashMap<Integer, List<IHyperlink>>();
+
 	public VT100EmulatorBackend(ITerminalTextData terminal) {
 		fTerminal=terminal;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#clearAll()
 	 */
-	public void clearAll() {
+  public void clearAll() {
 		synchronized (fTerminal) {
 			// clear the history
 			int n=fTerminal.getHeight();
@@ -74,10 +85,12 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setDimensions(int, int)
 	 */
-	public void setDimensions(int lines, int cols) {
+  public void setDimensions(int lines, int cols) {
 		synchronized (fTerminal) {
 			if(lines==fLines && cols==fColumns)
-				return; // nothing to do
+       {
+        return; // nothing to do
+      }
 			// relative cursor line
 			int cl=getCursorLine();
 			int cc=getCursorColumn();
@@ -102,7 +115,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			setCursor(cl, cc);
 		}
 	}
-	
+
 	int toAbsoluteLine(int line) {
 		synchronized (fTerminal) {
 			return fTerminal.getHeight()-fLines+line;
@@ -111,7 +124,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#insertCharacters(int)
 	 */
-	public void insertCharacters(int charactersToInsert) {
+  public void insertCharacters(int charactersToInsert) {
 		synchronized (fTerminal) {
 			int line=toAbsoluteLine(fCursorLine);
 			int n=charactersToInsert;
@@ -130,19 +143,19 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseToEndOfScreen()
 	 */
-	public void eraseToEndOfScreen() {
+  public void eraseToEndOfScreen() {
 		synchronized (fTerminal) {
 			eraseLineToEnd();
 			for (int line = toAbsoluteLine(fCursorLine+1); line < toAbsoluteLine(fLines); line++) {
 				fTerminal.cleanLine(line);
 			}
 		}
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseToCursor()
 	 */
-	public void eraseToCursor() {
+  public void eraseToCursor() {
 		synchronized (fTerminal) {
 			for (int line = toAbsoluteLine(0); line < toAbsoluteLine(fCursorLine); line++) {
 				fTerminal.cleanLine(line);
@@ -153,7 +166,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseAll()
 	 */
-	public void eraseAll() {
+  public void eraseAll() {
 		synchronized (fTerminal) {
 			for (int line = toAbsoluteLine(0); line < toAbsoluteLine(fLines); line++) {
 				fTerminal.cleanLine(line);
@@ -163,7 +176,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseLine()
 	 */
-	public void eraseLine() {
+  public void eraseLine() {
 		synchronized (fTerminal) {
 			fTerminal.cleanLine(toAbsoluteLine(fCursorLine));
 		}
@@ -171,33 +184,36 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseLineToEnd()
 	 */
-	public void eraseLineToEnd() {
+  public void eraseLineToEnd() {
 		synchronized (fTerminal) {
 			int line=toAbsoluteLine(fCursorLine);
 			for (int col = fCursorColumn; col < fColumns; col++) {
 				fTerminal.setChar(line, col, '\000', null);
 			}
 		}
-	}	
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#eraseLineToCursor()
 	 */
-	public void eraseLineToCursor() {
+	@Override
+  public void eraseLineToCursor() {
 		synchronized (fTerminal) {
 			int line=toAbsoluteLine(fCursorLine);
 			for (int col = 0; col <= fCursorColumn; col++) {
 				fTerminal.setChar(line, col, '\000', null);
 			}
 		}
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#insertLines(int)
 	 */
-	public void insertLines(int n) {
+	@Override
+  public void insertLines(int n) {
 		synchronized (fTerminal) {
-			if(!isCusorInScrollingRegion())
-				return;
+			if(!isCusorInScrollingRegion()) {
+        return;
+      }
 			assert n>0;
 			int line=toAbsoluteLine(fCursorLine);
 			int nLines=fTerminal.getHeight()-line;
@@ -207,7 +223,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#deleteCharacters(int)
 	 */
-	public void deleteCharacters(int n) {
+  public void deleteCharacters(int n) {
 		synchronized (fTerminal) {
 			int line=toAbsoluteLine(fCursorLine);
 			for (int col = fCursorColumn+n; col < fColumns; col++) {
@@ -224,10 +240,12 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#deleteLines(int)
 	 */
-	public void deleteLines(int n) {
+	@Override
+  public void deleteLines(int n) {
 		synchronized (fTerminal) {
-			if(!isCusorInScrollingRegion())
-				return;
+			if(!isCusorInScrollingRegion()) {
+        return;
+      }
 			assert n>0;
 			int line=toAbsoluteLine(fCursorLine);
 			int nLines=fTerminal.getHeight()-line;
@@ -242,7 +260,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getDefaultStyle()
 	 */
-	public Style getDefaultStyle() {
+  public Style getDefaultStyle() {
 		synchronized (fTerminal) {
 			return fDefaultStyle;
 		}
@@ -251,7 +269,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setDefaultStyle(org.eclipse.tm.terminal.model.Style)
 	 */
-	public void setDefaultStyle(Style defaultStyle) {
+  public void setDefaultStyle(Style defaultStyle) {
 		synchronized (fTerminal) {
 			fDefaultStyle = defaultStyle;
 		}
@@ -260,17 +278,18 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getStyle()
 	 */
-	public Style getStyle() {
+  public Style getStyle() {
 		synchronized (fTerminal) {
-			if(fStyle==null)
-				return fDefaultStyle;
+			if(fStyle==null) {
+        return fDefaultStyle;
+      }
 			return fStyle;
 		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setStyle(org.eclipse.tm.terminal.model.Style)
 	 */
-	public void setStyle(Style style) {
+  public void setStyle(Style style) {
 		synchronized (fTerminal) {
 			fStyle=style;
 		}
@@ -278,10 +297,16 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#appendString(java.lang.String)
 	 */
-	public void appendString(String buffer) {
+  public void appendString(String buffer) {
 		synchronized (fTerminal) {
 			char[] chars=buffer.toCharArray();
 			int line=toAbsoluteLine(fCursorLine);
+			int originalLine = line;
+			List<IHyperlink> found = emptyList();
+			if (buffer != null) {
+			  found = urlHyperlinkFactory.hyperlinksIn(fCursorColumn, buffer);
+		    hyperlinks.put(new Integer(line), found);
+      }
 			int i=0;
 			while (i < chars.length) {
 				int n=Math.min(fColumns-fCursorColumn,chars.length-i);
@@ -297,7 +322,23 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 					setCursorColumn(col);
 				}
 			}
+			drawHyperlinks(found, originalLine);
 		}
+	}
+
+	private void drawHyperlinks(List<IHyperlink> hyperlinks, int line) {
+    for (IHyperlink hyperlink : hyperlinks) {
+      IRegion region = hyperlink.getHyperlinkRegion();
+      int start = region.getOffset();
+      int end = start + region.getLength();
+      for (int column = start; column < end; column++) {
+        Style style = fTerminal.getStyle(line, column);
+        if (style != null) {
+          style = style.setUnderline(true);
+          fTerminal.setChar(line, column, fTerminal.getChar(line, column), style);
+        }
+      }
+    }
 	}
 
 	/**
@@ -307,8 +348,9 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 		if(fCursorLine+1>=fLines) {
 			int h=fTerminal.getHeight();
 			fTerminal.addLine();
-			if(h!=fTerminal.getHeight())
-				setCursorLine(fCursorLine+1);
+			if(h!=fTerminal.getHeight()) {
+        setCursorLine(fCursorLine+1);
+      }
 		} else {
 			setCursorLine(fCursorLine+1);
 		}
@@ -316,7 +358,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#processNewline()
 	 */
-	public void processNewline() {
+  public void processNewline() {
 		synchronized (fTerminal) {
 			doNewline();
 		}
@@ -324,7 +366,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getCursorLine()
 	 */
-	public int getCursorLine() {
+  public int getCursorLine() {
 		synchronized (fTerminal) {
 			return fCursorLine;
 		}
@@ -332,7 +374,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getCursorColumn()
 	 */
-	public int getCursorColumn() {
+  public int getCursorColumn() {
 		synchronized (fTerminal) {
 			return fCursorColumn;
 		}
@@ -340,7 +382,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setCursor(int, int)
 	 */
-	public void setCursor(int targetLine, int targetColumn) {
+  public void setCursor(int targetLine, int targetColumn) {
 		synchronized (fTerminal) {
 			setCursorLine(targetLine);
 			setCursorColumn(targetColumn);
@@ -350,12 +392,13 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setCursorColumn(int)
 	 */
-	public void setCursorColumn(int targetColumn) {
+  public void setCursorColumn(int targetColumn) {
 		synchronized (fTerminal) {
-			if(targetColumn<0)
-				targetColumn=0;
-			else if(targetColumn>=fColumns)
-				targetColumn=fColumns-1;
+			if(targetColumn<0) {
+        targetColumn=0;
+      } else if(targetColumn>=fColumns) {
+        targetColumn=fColumns-1;
+      }
 			fCursorColumn=targetColumn;
 			// We make the assumption that nobody is changing the
 			// terminal cursor except this class!
@@ -367,12 +410,13 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#setCursorLine(int)
 	 */
-	public void setCursorLine(int targetLine) {
+  public void setCursorLine(int targetLine) {
 		synchronized (fTerminal) {
-			if(targetLine<0)
-				targetLine=0;
-			else if(targetLine>=fLines)
-				targetLine=fLines-1;
+			if(targetLine<0) {
+        targetLine=0;
+      } else if(targetLine>=fLines) {
+        targetLine=fLines-1;
+      }
 			fCursorLine=targetLine;
 			// We make the assumption that nobody is changing the
 			// terminal cursor except this class!
@@ -384,7 +428,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getLines()
 	 */
-	public int getLines() {
+  public int getLines() {
 		synchronized (fTerminal) {
 			return fLines;
 		}
@@ -393,9 +437,17 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.emulator.IVT100EmulatorBackend#getColumns()
 	 */
-	public int getColumns() {
+  public int getColumns() {
 		synchronized (fTerminal) {
 			return fColumns;
 		}
 	}
+  
+  public List<IHyperlink> hyperlinksAt(int line) {
+    List<IHyperlink> found = hyperlinks.get(new Integer(line));
+    if (found == null) {
+      return emptyList();
+    }
+    return found;
+  }
 }

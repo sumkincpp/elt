@@ -20,18 +20,14 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
+import java.io.*;
+import java.util.List;
 
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
-import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.Logger;
-import org.eclipse.tm.terminal.model.ITerminalTextData;
-import org.eclipse.tm.terminal.model.Style;
+import org.eclipse.jface.text.hyperlink.IHyperlink;
+import org.eclipse.swt.events.*;
+import org.eclipse.tm.internal.terminal.control.impl.*;
+import org.eclipse.tm.internal.terminal.provisional.api.*;
+import org.eclipse.tm.terminal.model.*;
 
 /**
  * This class processes character data received from the remote host and
@@ -133,10 +129,11 @@ public class VT100Emulator implements ControlListener {
 			ansiParameters[i] = new StringBuffer();
 		}
 		setInputStreamReader(reader);
-		if(TerminalPlugin.isOptionEnabled("org.eclipse.tm.terminal/debug/log/VT100Backend")) //$NON-NLS-1$
-			text=new VT100BackendTraceDecorator(new VT100EmulatorBackend(data),System.out);
-		else
-			text=new VT100EmulatorBackend(data);
+		if(TerminalPlugin.isOptionEnabled("org.eclipse.tm.terminal/debug/log/VT100Backend")) {
+      text=new VT100BackendTraceDecorator(new VT100EmulatorBackend(data),System.out);
+    } else {
+      text=new VT100EmulatorBackend(data);
+    }
 
 //		text.setDimensions(24, 80);
 		Style  style=Style.getStyle("BLACK", "WHITE"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -182,7 +179,8 @@ public class VT100Emulator implements ControlListener {
 	 * This method is required by interface ControlListener. It allows us to
 	 * know when the StyledText widget is moved.
 	 */
-	public void controlMoved(ControlEvent event) {
+	@Override
+  public void controlMoved(ControlEvent event) {
 		Logger.log("entered"); //$NON-NLS-1$
 		// Empty.
 	}
@@ -191,7 +189,8 @@ public class VT100Emulator implements ControlListener {
 	 * This method is required by interface ControlListener. It allows us to
 	 * know when the StyledText widget is resized.
 	 */
-	public void controlResized(ControlEvent event) {
+	@Override
+  public void controlResized(ControlEvent event) {
 		Logger.log("entered"); //$NON-NLS-1$
 		adjustTerminalDimensions();
 	}
@@ -212,8 +211,9 @@ public class VT100Emulator implements ControlListener {
 	public void fontChanged() {
 		Logger.log("entered"); //$NON-NLS-1$
 
-		if (text != null)
-			adjustTerminalDimensions();
+		if (text != null) {
+      adjustTerminalDimensions();
+    }
 	}
 //	/**
 //	 * This method executes in the Display thread to process data received from
@@ -289,7 +289,9 @@ public class VT100Emulator implements ControlListener {
 				case '\n':
 					processNewline(); // Newline (Control-J)
 					if(fCrAfterNewLine)
-						processCarriageReturn(); // Carriage Return (Control-M)
+           {
+            processCarriageReturn(); // Carriage Return (Control-M)
+          }
 					break;
 
 				case '\r':
@@ -607,8 +609,9 @@ public class VT100Emulator implements ControlListener {
 	private void processAnsiCommand_G() {
 		int targetColumn = 1;
 
-		if (ansiParameters[0].length() > 0)
-			targetColumn = getAnsiParameter(0) - 1;
+		if (ansiParameters[0].length() > 0) {
+      targetColumn = getAnsiParameter(0) - 1;
+    }
 
 		moveCursor(relativeCursorLine(), targetColumn);
 	}
@@ -628,10 +631,11 @@ public class VT100Emulator implements ControlListener {
 	private void processAnsiCommand_J() {
 		int ansiParameter;
 
-		if (ansiParameters[0].length() == 0)
-			ansiParameter = 0;
-		else
-			ansiParameter = getAnsiParameter(0);
+		if (ansiParameters[0].length() == 0) {
+      ansiParameter = 0;
+    } else {
+      ansiParameter = getAnsiParameter(0);
+    }
 
 		switch (ansiParameter) {
 		case 0:
@@ -848,8 +852,9 @@ public class VT100Emulator implements ControlListener {
 		// Do nothing if the numeric parameter was not 6 (which means report cursor
 		// position).
 
-		if (getAnsiParameter(0) != 6)
-			return;
+		if (getAnsiParameter(0) != 6) {
+      return;
+    }
 
 		// Send the ANSI cursor position (which is 1-based) to the remote endpoint.
 
@@ -890,8 +895,9 @@ public class VT100Emulator implements ControlListener {
 
 		String parameter = ansiParameters[parameterIndex].toString();
 
-		if (parameter.length() == 0)
-			return 1;
+		if (parameter.length() == 0) {
+      return 1;
+    }
 
 		int parameterValue = 1;
 
@@ -918,8 +924,9 @@ public class VT100Emulator implements ControlListener {
 		if (ch == ';') {
 			++nextAnsiParameter;
 		} else {
-			if (nextAnsiParameter < ansiParameters.length)
-				ansiParameters[nextAnsiParameter].append(ch);
+			if (nextAnsiParameter < ansiParameters.length) {
+        ansiParameters[nextAnsiParameter].append(ch);
+      }
 		}
 	}
 	/**
@@ -1061,8 +1068,9 @@ public class VT100Emulator implements ControlListener {
 	}
 
 	private ITerminalConnector getConnector() {
-		if(terminal.getTerminalConnector()!=null)
-			return terminal.getTerminalConnector();
+		if(terminal.getTerminalConnector()!=null) {
+      return terminal.getTerminalConnector();
+    }
 		return null;
 	}
 
@@ -1150,14 +1158,16 @@ public class VT100Emulator implements ControlListener {
 			c = fReader.read();
 		}
 		// TODO: better end of file handling
-		if(c==-1)
-			c=0;
+		if(c==-1) {
+      c=0;
+    }
 		return (char)c;
 	}
 
 	private boolean hasNextChar() throws IOException  {
-		if(fNextChar>=0)
-			return true;
+		if(fNextChar>=0) {
+      return true;
+    }
 		return fReader.ready();
 	}
 
@@ -1180,4 +1190,8 @@ public class VT100Emulator implements ControlListener {
 	public void setCrAfterNewLine(boolean crAfterNewLine) {
 		fCrAfterNewLine = crAfterNewLine;
 	}
+
+  public List<IHyperlink> hyperlinksAt(int line) {
+    return text.hyperlinksAt(line);
+  }
 }
