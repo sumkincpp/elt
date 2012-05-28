@@ -48,6 +48,8 @@
 
    <plugin
          id="com.google.eclipse.cdt.core.macosx"
+         os="macosx"
+         arch="ppc,x86,x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -55,6 +57,7 @@
 
    <plugin
          id="com.google.eclipse.cdt.core.linux"
+         os="linux"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -62,6 +65,8 @@
 
    <plugin
          id="com.google.eclipse.cdt.core.linux.x86"
+         os="linux"
+         arch="x86"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -69,6 +74,8 @@
 
    <plugin
          id="com.google.eclipse.cdt.core.linux.x86_64"
+         os="linux"
+         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
