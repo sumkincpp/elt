@@ -4,6 +4,6 @@ Bundle-Name: %fragmentName.linux.x86_64
 Bundle-SymbolicName: com.google.eclipse.cdt.core.linux.x86_64;singleton:=true
 Bundle-Version: 5.2.0.qualifier
 Bundle-Vendor: %providerName
-Fragment-Host: org.eclipse.cdt.core
+Fragment-Host: com.google.eclipse.cdt.core
 Bundle-Localization: plugin
 Eclipse-PlatformFilter: (&(osgi.os=linux)(osgi.arch=x86_64))
