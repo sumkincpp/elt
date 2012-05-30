@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.google.eclipse.terminal.local.feature"
-      label="Local Terminal"
+      label="%featureName"
       version="1.0.0.qualifier"
-      provider-name="Google, Inc.">
+      provider-name="%providerName">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="https://code.google.com/p/elt/">
+      %description
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright>
+      %description
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="%licenseURL">
+      %license
    </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://elt.googlecode.com/git/update-site"/>
+   </url>
 
    <requires>
       <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
