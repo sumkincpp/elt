@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.google.eclipse.terminal.local.feature_1.0.0.qualifier.jar" id="com.google.eclipse.terminal.local.feature" version="1.0.0.qualifier">
+   <feature url="features/com.google.eclipse.terminal.local.feature_1.0.0.201205301951.jar" id="com.google.eclipse.terminal.local.feature" version="1.0.0.201205301951">
       <category name="google"/>
    </feature>
    <category-def name="google" label="Google Inc."/>
