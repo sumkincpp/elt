@@ -9,7 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.google.eclipse.tm.terminal,
  com.google.eclipse.cdt.core,
- org.eclipse.debug.core;bundle-version="3.7.1",
+ org.eclipse.debug.core,
  org.eclipse.jface.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
