@@ -62,12 +62,13 @@ public class TerminalView extends ViewPart {
 
   private static void openTerminalView(String id, IPath workingDirectory) {
     IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+    IPath safeWorkingDirectory = (workingDirectory != null) ? workingDirectory : userHomeDirectory();
     try {
-      String directoryName = workingDirectory.lastSegment();
+      String directoryName = safeWorkingDirectory.lastSegment();
       String secondaryId = (id != null) ? id : directoryName;
       TerminalView view = (TerminalView) page.showView(VIEW_ID, secondaryId, VIEW_ACTIVATE);
       view.setPartName(directoryName);
-      view.open(workingDirectory);
+      view.open(safeWorkingDirectory);
     } catch (PartInitException e) {
       log("Unable to create Terminal View", e);
     }
