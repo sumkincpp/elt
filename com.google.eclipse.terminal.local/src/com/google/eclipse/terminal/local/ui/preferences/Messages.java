@@ -28,6 +28,7 @@ public class Messages extends NLS {
   public static String unableToLoadPreviewContent;
   public static String useCustomFont;
   public static String useTextFont;
+  public static String warnOnClose;
 
   static {
     Class<Messages> type = Messages.class;

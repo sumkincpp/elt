@@ -40,7 +40,7 @@ import com.google.eclipse.terminal.local.ui.preferences.AbstractPreferencesChang
 /**
  * @author alruiz@google.com (Alex Ruiz)
  */
-public class TerminalView extends ViewPart {
+public class TerminalView extends ViewPart implements ISaveablePart2 {
   private static final String SCROLL_LOCK_ENABLED = "scrollLock";
   private static final String TITLE_STATE_TYPE = "title";
   private static final String WORKING_DIRECTORY_STATE_TYPE = "workingDirectory";
@@ -55,6 +55,9 @@ public class TerminalView extends ViewPart {
 
   private Action newTerminalAction;
   private Action scrollLockAction;
+
+  private boolean checkCanBeClosed;
+  private boolean forceClose;
 
   public static void openTerminalView(IPath workingDirectory) {
     openTerminalView(null, workingDirectory);
@@ -150,6 +153,7 @@ public class TerminalView extends ViewPart {
   private void closeViewOnExitIfPossible() {
     if (closeViewOnExit() && terminalWidget != null && !terminalWidget.isDisposed()) {
       // must run in UI thread.
+      forceClose = true;
       terminalWidget.getDisplay().asyncExec(new Runnable() {
         @Override public void run() {
           IWorkbenchPartSite site = getSite();
@@ -273,5 +277,39 @@ public class TerminalView extends ViewPart {
       boolean newValue = !terminalWidget.isScrollLockEnabled();
       enableScrollLockAndUpdateAction(newValue);
     }
+  }
+
+  @Override public boolean isDirty() {
+    if (checkCanBeClosed) {
+      checkCanBeClosed = false;
+      return true;
+    }
+    return false;
+  }
+
+  @Override public boolean isSaveOnCloseNeeded() {
+    if (forceClose) {
+      return false;
+    }
+    checkCanBeClosed = true;
+    return true;
+  }
+
+  @Override public int promptToSaveOnClose() {
+    if (warnOnClose()) {
+      boolean close = WarnOnCloseDialog.open(terminalWidget.getShell());
+      if (!close) {
+        return CANCEL;
+      }
+    }
+    return NO;
+  }
+
+  @Override public void doSave(IProgressMonitor monitor) {}
+
+  @Override public void doSaveAs() {}
+
+  @Override public boolean isSaveAsAllowed() {
+    return false;
   }
 }

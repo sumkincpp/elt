@@ -23,6 +23,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
   @Override public void initializeDefaultPreferences() {
     preferenceStore().setDefault(BUFFER_LINE_COUNT, 1000);
     preferenceStore().setDefault(CLOSE_VIEW_ON_EXIT, true);
+    preferenceStore().setDefault(WARN_ON_CLOSE, true);
     setDefault(BACKGROUND_COLOR, new RGB(0, 0, 0));
     setDefault(FOREGROUND_COLOR, new RGB(229, 229, 229));
     preferenceStore().setDefault(USE_CUSTOM_FONT, false);

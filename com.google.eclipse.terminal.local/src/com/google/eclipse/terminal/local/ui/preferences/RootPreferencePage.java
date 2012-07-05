@@ -29,8 +29,9 @@ public class RootPreferencePage extends PreferencePage implements IWorkbenchPref
   private static final String INVALID_BUFFER_LINE_COUNT_MESSAGE =
       NLS.bind(invalidBufferLineCount, MINIMUM_BUFFER_LINE_COUNT, MAXIMUM_BUFFER_LINE_COUNT);
 
-  private Button btnCloseViewOnExit;
   private Text txtBufferLineCount;
+  private Button btnCloseViewOnExit;
+  private Button btnWarnOnClose;
 
   private int newBufferLineCount;
 
@@ -75,6 +76,10 @@ public class RootPreferencePage extends PreferencePage implements IWorkbenchPref
     btnCloseViewOnExit.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
     btnCloseViewOnExit.setText(closeViewOnExit);
 
+    btnWarnOnClose = new Button(contents, SWT.CHECK);
+    btnWarnOnClose.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+    btnWarnOnClose.setText(warnOnClose);
+
     updateContents();
     return contents;
   }
@@ -85,17 +90,21 @@ public class RootPreferencePage extends PreferencePage implements IWorkbenchPref
   }
 
   private void updateContents() {
-    btnCloseViewOnExit.setSelection(getPreferenceStore().getBoolean(CLOSE_VIEW_ON_EXIT));
     txtBufferLineCount.setText(getPreferenceStore().getString(BUFFER_LINE_COUNT));
+    btnCloseViewOnExit.setSelection(getPreferenceStore().getBoolean(CLOSE_VIEW_ON_EXIT));
+    btnWarnOnClose.setSelection(getPreferenceStore().getBoolean(WARN_ON_CLOSE));
   }
 
   @Override public boolean performOk() {
     getPreferenceStore().setValue(BUFFER_LINE_COUNT, newBufferLineCount);
     getPreferenceStore().setValue(CLOSE_VIEW_ON_EXIT, btnCloseViewOnExit.getSelection());
+    getPreferenceStore().setValue(WARN_ON_CLOSE, btnWarnOnClose.getSelection());
     return true;
   }
 
   @Override protected void performDefaults() {
+    txtBufferLineCount.setText(getPreferenceStore().getDefaultString(BUFFER_LINE_COUNT));
     btnCloseViewOnExit.setSelection(getPreferenceStore().getDefaultBoolean(CLOSE_VIEW_ON_EXIT));
+    btnWarnOnClose.setSelection(getPreferenceStore().getDefaultBoolean(WARN_ON_CLOSE));
   }
 }

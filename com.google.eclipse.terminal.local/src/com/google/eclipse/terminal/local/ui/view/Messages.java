@@ -14,6 +14,9 @@ import org.eclipse.osgi.util.NLS;
  * @author alruiz@google.com (Alex Ruiz)
  */
 public class Messages extends NLS {
+  public static String alwaysCloseWithoutWarn;
+  public static String closeTerminalQuestion;
+  public static String confirmCloseDialogTitle;
   public static String defaultViewTitle;
   public static String newLocalTerminal;
   public static String scrollLock;

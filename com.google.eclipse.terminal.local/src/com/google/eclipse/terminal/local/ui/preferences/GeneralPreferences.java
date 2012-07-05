@@ -23,5 +23,13 @@ public final class GeneralPreferences {
     return preferenceStore().getBoolean(CLOSE_VIEW_ON_EXIT);
   }
 
+  public static boolean warnOnClose() {
+    return preferenceStore().getBoolean(WARN_ON_CLOSE);
+  }
+
+  public static void warnOnClose(boolean newValue) {
+    preferenceStore().setValue(WARN_ON_CLOSE, newValue);
+  }
+
   private GeneralPreferences() {}
 }
