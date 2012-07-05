@@ -68,6 +68,7 @@ class TerminalWidget extends Composite {
         editActions.update();
       }
     });
+    terminalTextControl.addKeyListener(new CommandLauncher());
   }
 
   private Menu createContextMenu(MenuManager menuManager) {

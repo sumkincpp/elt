@@ -33,6 +33,9 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
+import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertEventToUnmodifiedAccelerator;
+import static org.eclipse.tm.internal.terminal.emulator.Accelerators.createEditActionAccelerator;
+
 import java.io.*;
 import java.net.SocketException;
 import java.util.List;
@@ -72,6 +75,10 @@ import org.eclipse.ui.keys.IBindingService;
 public class VT100TerminalControl implements ITerminalControlForText, ITerminalControl, ITerminalViewControl
 {
     protected final static String[] LINE_DELIMITERS = { "\n" }; //$NON-NLS-1$
+
+    private static final int[] EDIT_ACTION_ACCELERATORS = new int[] {
+      createEditActionAccelerator('C'), createEditActionAccelerator('V'), createEditActionAccelerator('A')
+    };
 
     /**
      * This field holds a reference to a TerminalText object that performs all ANSI
@@ -772,6 +779,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			if (getState()==TerminalState.CONNECTING) {
         return;
       }
+
+			int accelerator = convertEventToUnmodifiedAccelerator(event);
+			for (int editActionAccelerator : EDIT_ACTION_ACCELERATORS) {
+			  if (editActionAccelerator == accelerator) {
+          return;
+        }
+			}
 
 			// We set the event.doit to false to prevent any further processing of this
 			// key event.  The only reason this is here is because I was seeing the F10
