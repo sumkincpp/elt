@@ -62,13 +62,11 @@ class TerminalWidget extends Composite {
         editActions.onMenuHidden();
       }
     });
-    Control terminalTextControl = terminalTextControl();
-    terminalTextControl.addFocusListener(new FocusAdapter() {
+    terminalTextControl().addFocusListener(new FocusAdapter() {
       @Override public void focusGained(FocusEvent e) {
         editActions.update();
       }
     });
-    terminalTextControl.addKeyListener(new CommandLauncher());
   }
 
   private Menu createContextMenu(MenuManager menuManager) {

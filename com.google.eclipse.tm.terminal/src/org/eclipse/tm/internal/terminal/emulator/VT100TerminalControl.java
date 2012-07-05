@@ -60,6 +60,8 @@ import org.eclipse.tm.internal.terminal.textcanvas.PipedInputStream;
 import org.eclipse.tm.terminal.model.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.*;
+import org.eclipse.ui.internal.keys.*;
+import org.eclipse.ui.internal.keys.WorkbenchKeyboard.KeyDownFilter;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -783,6 +785,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			int accelerator = convertEventToUnmodifiedAccelerator(event);
 			for (int editActionAccelerator : EDIT_ACTION_ACCELERATORS) {
 			  if (editActionAccelerator == accelerator) {
+          forceCommandExecution(event);
           return;
         }
 			}
@@ -1006,6 +1009,40 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			writeToTerminal(charBuffer.toString());
 		}
 
+    private void forceCommandExecution(KeyEvent e) {
+      if (!e.doit) {
+        return;
+      }
+      IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+      // Necessary to handle copy/paste/"select all" keyboard accelerators.
+      if (bindingService instanceof BindingService) {
+        KeyDownFilter filter = ((BindingService) bindingService).getKeyboard().getKeyDownFilter();
+        Control focusControl = e.display.getFocusControl();
+        boolean enabled = filter.isEnabled();
+        try {
+          filter.setEnabled(true);
+          filter.handleEvent(copyOf(e));
+        } finally {
+          if (focusControl == e.display.getFocusControl() && !enabled) {
+            filter.setEnabled(enabled);
+          }
+        }
+      }
+    }
+
+    private Event copyOf(KeyEvent e) {
+      Event event = new Event();
+      event.character = e.character;
+      event.data = e.data;
+      event.display = e.display;
+      event.doit = e.doit;
+      event.keyCode = e.keyCode;
+      event.keyLocation = e.keyLocation;
+      event.stateMask = e.stateMask;
+      event.time = e.time;
+      event.widget = e.widget;
+      return event;
+    }
 	}
 
 	@Override public void setTerminalTitle(String title) {
