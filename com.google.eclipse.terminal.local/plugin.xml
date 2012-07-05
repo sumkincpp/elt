@@ -68,6 +68,22 @@
          <command
                commandId="com.google.eclipse.terminal.local.open"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <with
+                        variable="selection">
+                     <count
+                           value="1">
+                     </count>
+                  </with>
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                     </adapt>
+                  </iterate>
+               </and>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
