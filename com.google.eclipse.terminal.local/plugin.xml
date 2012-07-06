@@ -98,7 +98,7 @@
          point="org.eclipse.ui.contexts">
       <context
             description="In Local Terminal"
-            id="com.google.eclipse.terminal.local.localTerminalView"
+            id="com.google.eclipse.terminal.local.context.localTerminal"
             name="Local Terminal"
             parentId="org.eclipse.ui.contexts.window">
       </context>
@@ -111,6 +111,11 @@
       </category>
       <command
             categoryId="com.google.eclipse.terminal.local.commands.category"
+            id="com.google.eclipse.terminal.local.copy"
+            name="Copy">
+      </command>
+      <command
+            categoryId="com.google.eclipse.terminal.local.commands.category"
             id="com.google.eclipse.terminal.local.paste"
             name="Paste">
       </command>
@@ -118,11 +123,30 @@
    <extension
          point="org.eclipse.ui.bindings">
       <key
+            commandId="com.google.eclipse.terminal.local.copy"
+            contextId="com.google.eclipse.terminal.local.context.localTerminal"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+C">
+      </key>
+      <key
+            commandId="com.google.eclipse.terminal.local.copy"
+            contextId="com.google.eclipse.terminal.local.context.localTerminal"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+C">
+      </key>
+      <key
             commandId="com.google.eclipse.terminal.local.paste"
-            contextId="org.eclipse.ui.contexts.window"
+            contextId="com.google.eclipse.terminal.local.context.localTerminal"
             platform="carbon"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+V">
+      </key>
+      <key
+            commandId="com.google.eclipse.terminal.local.paste"
+            contextId="com.google.eclipse.terminal.local.context.localTerminal"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+V">
       </key>
    </extension>
 

@@ -29,7 +29,9 @@ class PopupMenu {
   PopupMenu(IViewSite viewSite, VT100TerminalControl terminalControl) {
     PopupMenuManager menuManager = new PopupMenuManager();
     copy = menuManager.add(new TerminalActionCopy(terminalControl));
+    copy.setActionDefinitionId("com.google.eclipse.terminal.local.copy");
     paste = menuManager.add(new TerminalActionPaste(terminalControl));
+    paste.setActionDefinitionId("com.google.eclipse.terminal.local.paste");
     menuManager.add(new Separator());
     selectAll = menuManager.add(new TerminalActionSelectAll(terminalControl));
     clearAll = menuManager.add(new TerminalActionClearAll(terminalControl));
@@ -37,8 +39,8 @@ class PopupMenu {
     actionBars.setGlobalActionHandler(COPY.getId(), copy);
     actionBars.setGlobalActionHandler(PASTE.getId(), paste);
     actionBars.setGlobalActionHandler(SELECT_ALL.getId(), selectAll);
-    paste.setActionDefinitionId("com.google.eclipse.terminal.local.paste");
     IKeyBindingService keyBindingService = viewSite.getKeyBindingService();
+    keyBindingService.registerAction(copy);
     keyBindingService.registerAction(paste);
     menuManager.addMenuListener(new IMenuListener() {
       @Override public void menuAboutToShow(IMenuManager manager) {

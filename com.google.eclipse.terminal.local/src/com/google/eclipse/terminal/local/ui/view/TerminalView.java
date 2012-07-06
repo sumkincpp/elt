@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.ui.*;
+import org.eclipse.ui.contexts.*;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
@@ -57,6 +58,8 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
 
   private boolean checkCanBeClosed;
   private boolean forceClose;
+
+  private IContextActivation contextActivation;
 
   public static void openTerminalView(IPath workingDirectory) {
     openTerminalView(null, workingDirectory);
@@ -136,6 +139,10 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
     JFaceResources.getFontRegistry().addListener(textFontChangeListener);
     updateFont();
     setupToolBarActions();
+    IContextService contextService = contextService();
+    if (contextService != null) {
+      contextActivation = contextService.activateContext("com.google.eclipse.terminal.local.context.localTerminal");
+    }
     if (savedState != null) {
       updateScrollLockUsingSavedState();
       connectUsingSavedState();
@@ -244,6 +251,12 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
   }
 
   @Override public void dispose() {
+    if (contextActivation != null) {
+      IContextService contextService = contextService();
+      if (contextService != null) {
+        contextService.deactivateContext(contextActivation);
+      }
+    }
     if (preferencesChangeListener != null) {
       preferenceStore().removePropertyChangeListener(preferencesChangeListener);
     }
@@ -251,6 +264,10 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
       JFaceResources.getFontRegistry().removeListener(textFontChangeListener);
     }
     super.dispose();
+  }
+
+  private IContextService contextService() {
+    return (IContextService) getSite().getService(IContextService.class);
   }
 
   private class NewTerminalAction extends Action {
