@@ -94,5 +94,36 @@
             commandId="com.google.eclipse.terminal.local.open">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="In Local Terminal"
+            id="com.google.eclipse.terminal.local.localTerminalView"
+            name="Local Terminal"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="com.google.eclipse.terminal.local.commands.category"
+            name="Local Terminal">
+      </category>
+      <command
+            categoryId="com.google.eclipse.terminal.local.commands.category"
+            id="com.google.eclipse.terminal.local.paste"
+            name="Paste">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="com.google.eclipse.terminal.local.paste"
+            contextId="org.eclipse.ui.contexts.window"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+V">
+      </key>
+   </extension>
 
 </plugin>

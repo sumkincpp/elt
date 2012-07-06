@@ -12,15 +12,15 @@ import static com.google.eclipse.terminal.local.core.connector.LocalTerminalConn
 import static org.eclipse.tm.internal.terminal.provisional.api.TerminalState.CONNECTING;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.layout.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.*;
-import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
 
 import com.google.eclipse.terminal.local.core.connector.*;
 
@@ -31,12 +31,11 @@ class TerminalWidget extends Composite {
   private final TerminalListener terminalListener = new TerminalListener();
 
   private final VT100TerminalControl terminalControl;
-  private final EditActions editActions;
 
   private LifeCycleListener lifeCycleListener;
 
-  TerminalWidget(Composite parent, int style) {
-    super(parent, style);
+  TerminalWidget(Composite parent, IViewSite viewSite) {
+    super(parent, SWT.NONE);
     GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(this);
     ITerminalConnector terminalConnector = createLocalTerminalConnector();
     terminalControl = new VT100TerminalControl(terminalListener, this, new ITerminalConnector[] { terminalConnector });
@@ -48,40 +47,16 @@ class TerminalWidget extends Composite {
         disposeTerminalControl();
       }
     });
-    editActions = new EditActions(terminalControl);
-    MenuManager menuManager = new MenuManager("#PopupMenu");
-    editActions.addActionsTo(menuManager);
-    menuManager.addMenuListener(new IMenuListener() {
-      @Override public void menuAboutToShow(IMenuManager manager) {
-        editActions.update();
-      }
-    });
-    Menu menu = createContextMenu(menuManager);
-    menu.addMenuListener(new MenuAdapter() {
-      @Override public void menuHidden(MenuEvent e) {
-        editActions.onMenuHidden();
-      }
-    });
+    final PopupMenu popupMenu = new PopupMenu(viewSite, terminalControl);
     terminalTextControl().addFocusListener(new FocusAdapter() {
       @Override public void focusGained(FocusEvent e) {
-        editActions.update();
+        popupMenu.update();
       }
     });
-  }
-
-  private Menu createContextMenu(MenuManager menuManager) {
-    Control control = terminalTextControl();
-    Menu menu = menuManager.createContextMenu(control);
-    control.setMenu(menu);
-    return menu;
   }
 
   private Control terminalTextControl() {
     return terminalControl.getControl();
-  }
-
-  void setUpGlobalEditActionHandlers(IActionBars actionBars) {
-    editActions.setUpGlobalActionHandlers(actionBars);
   }
 
   void connect() {

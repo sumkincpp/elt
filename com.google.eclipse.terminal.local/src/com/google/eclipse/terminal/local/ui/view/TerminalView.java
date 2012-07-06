@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
@@ -94,7 +93,7 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
   }
 
   @Override public void createPartControl(Composite parent) {
-    terminalWidget = new TerminalWidget(parent, SWT.NONE);
+    terminalWidget = new TerminalWidget(parent, getViewSite());
     terminalWidget.setLifeCycleListener(new LifeCycleListener() {
       @Override public void executionFinished() {
         closeViewOnExitIfPossible();
@@ -109,7 +108,6 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
       }
     });
     IViewSite viewSite = getViewSite();
-    terminalWidget.setUpGlobalEditActionHandlers(viewSite.getActionBars());
     preferencesChangeListener = new AbstractPreferencesChangeListener() {
       @Override protected void onBufferLineCountChanged() {
         updateBufferLineCount();
