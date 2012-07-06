@@ -27,6 +27,10 @@ class TerminalOutputListener implements IStreamListener {
   }
 
   @Override public void streamAppended(String text, IStreamMonitor monitor) {
-    printStream.print(text);
+    String clean = text;
+    if (text.startsWith("\r[1A[K")) {
+      // TODO(alruiz) figure out why 1+ lines deleted in blaze build.
+    }
+    printStream.print(clean);
   }
 }

@@ -44,7 +44,7 @@ class PopupMenu {
     keyBindingService.registerAction(paste);
     menuManager.addMenuListener(new IMenuListener() {
       @Override public void menuAboutToShow(IMenuManager manager) {
-        update(copy, paste, selectAll, clearAll);
+        update();
       }
     });
     Control control = terminalControl.getControl();
