@@ -111,6 +111,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	 */
 	volatile private Job fJob;
 
+	private final EditActionAccelerators editActionAccelerators = new EditActionAccelerators();
+
 	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnector[] connectors) {
 		fConnectors=connectors;
 		fTerminalListener=target;
@@ -162,7 +164,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 
 	private void copy(int clipboardType) {
-		Object[] data = new Object[] { getSelection() };
+		String selection = getSelection();
+		if (selection == null || selection.isEmpty()) {
+		  return;
+		}
+    Object[] data = new Object[] { selection };
 		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
 		fClipboard.setContents(data, types, clipboardType);
 	}
@@ -780,16 +786,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
       }
 
 			int accelerator = convertEventToUnmodifiedAccelerator(event);
-			Integer naturalKey = EditActionAccelerators.naturalKey(accelerator);
-			if (naturalKey != null) {
-			  switch (naturalKey.intValue()) {
-  			  case 'C':
-  			    copy();
-  			    return;
-  			  case 'V':
-  			    paste();
-  			    return;
-			  }
+			if (editActionAccelerators.isCopyAction(accelerator)) {
+			  copy();
+			  return;
+			}
+			if (editActionAccelerators.isPasteAction(accelerator)) {
+			  paste();
+			  return;
 			}
 
 			// We set the event.doit to false to prevent any further processing of this
