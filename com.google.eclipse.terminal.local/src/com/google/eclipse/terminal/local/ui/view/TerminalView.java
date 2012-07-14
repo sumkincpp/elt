@@ -17,12 +17,14 @@ import static com.google.eclipse.terminal.local.util.Platform.userHomeDirectory;
 import static org.eclipse.core.runtime.Path.fromOSString;
 import static org.eclipse.core.runtime.Status.OK_STATUS;
 import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
+import static org.eclipse.jface.window.Window.OK;
 import static org.eclipse.ui.IWorkbenchPage.VIEW_ACTIVATE;
 
 import java.util.UUID;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.graphics.Font;
@@ -193,6 +195,8 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
 
   private void setupToolBarActions() {
     IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+    toolBarManager.add(new ChangeViewNameAction());
+    toolBarManager.add(new Separator());
     newTerminalAction = new NewTerminalAction();
     toolBarManager.add(newTerminalAction);
     scrollLockAction = new ScrollLockAction();
@@ -270,30 +274,6 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
     return (IContextService) getSite().getService(IContextService.class);
   }
 
-  private class NewTerminalAction extends Action {
-    NewTerminalAction() {
-      setImageDescriptor(imageDescriptor(NEW_TERMINAL));
-      setText(newLocalTerminal);
-    }
-
-    @Override public void run() {
-      openTerminalView(UUID.randomUUID().toString(), workingDirectory);
-    }
-  }
-
-  private class ScrollLockAction extends Action {
-    ScrollLockAction() {
-      super(scrollLock, AS_RADIO_BUTTON);
-      setChecked(false);
-      setImageDescriptor(imageDescriptor(SCROLL_LOCK));
-    }
-
-    @Override public void run() {
-      boolean newValue = !terminalWidget.isScrollLockEnabled();
-      enableScrollLockAndUpdateAction(newValue);
-    }
-  }
-
   @Override public boolean isDirty() {
     if (checkCanBeClosed) {
       checkCanBeClosed = false;
@@ -326,5 +306,54 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
 
   @Override public boolean isSaveAsAllowed() {
     return false;
+  }
+
+  private class NewTerminalAction extends Action {
+    NewTerminalAction() {
+      setImageDescriptor(imageDescriptor(NEW_TERMINAL));
+      setText(newLocalTerminal);
+    }
+
+    @Override public void run() {
+      openTerminalView(UUID.randomUUID().toString(), workingDirectory);
+    }
+  }
+
+  private class ScrollLockAction extends Action {
+    ScrollLockAction() {
+      super(scrollLock, AS_RADIO_BUTTON);
+      setChecked(false);
+      setImageDescriptor(imageDescriptor(SCROLL_LOCK));
+    }
+
+    @Override public void run() {
+      boolean newValue = !terminalWidget.isScrollLockEnabled();
+      enableScrollLockAndUpdateAction(newValue);
+    }
+  }
+
+  private class ChangeViewNameAction extends Action {
+    ChangeViewNameAction() {
+      setImageDescriptor(imageDescriptor(CHANGE_TITLE));
+      setText(changeTerminalTitle);
+    }
+
+    @Override public void run() {
+      Shell shell = getViewSite().getShell();
+      final String currentTitle = getPartName();
+      InputDialog input = new InputDialog(shell, enterTerminalTitleDialogTitle, enterTerminalTitlePrompt, currentTitle,
+          new IInputValidator() {
+            @Override public String isValid(String newText) {
+              if (newText == null || newText.isEmpty() || currentTitle.equals(newText)) {
+                return "";
+              }
+              return null;
+            }
+          });
+      input.setBlockOnOpen(true);
+      if (input.open() == OK) {
+        setPartName(input.getValue());
+      }
+    }
   }
 }

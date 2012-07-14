@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -40,11 +40,15 @@ public class Activator extends AbstractUIPlugin {
   }
 
   @Override protected void initializeImageRegistry(ImageRegistry registry) {
-    Bundle bundle = instance().getBundle();
-    URL newTerminalImageUrl = bundle.getEntry("icons/new_terminal.gif");
-    registry.put(NEW_TERMINAL, ImageDescriptor.createFromURL(newTerminalImageUrl));
-    URL scrollLockImageUrl = bundle.getEntry("icons/scroll_lock.gif");
-    registry.put(SCROLL_LOCK, ImageDescriptor.createFromURL(scrollLockImageUrl));
+    addImage(registry, CHANGE_TITLE, "icons/change_title.gif");
+    addImage(registry, NEW_TERMINAL, "icons/new_terminal.gif");
+    addImage(registry, SCROLL_LOCK, "icons/scroll_lock.gif");
+  }
+
+  private void addImage(ImageRegistry registry, String key, String path) {
+    URL imageUrl = instance().getBundle().getEntry(path);
+    registry.put(key, ImageDescriptor.createFromURL(imageUrl));
+
   }
 
   public static void log(String message, Throwable cause) {
