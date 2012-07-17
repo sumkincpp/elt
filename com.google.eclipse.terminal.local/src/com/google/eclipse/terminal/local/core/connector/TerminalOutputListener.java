@@ -28,7 +28,8 @@ class TerminalOutputListener implements IStreamListener {
 
   @Override public void streamAppended(String text, IStreamMonitor monitor) {
     String clean = text;
-    if (text.startsWith("\r[1A[K")) {
+    if (text.contains("\u001b[1A\u001b[K")) {
+      clean = text.replace("\u001b[1A\u001b[K", "\u001b[K");
       // TODO(alruiz) figure out why 1+ lines deleted in blaze build.
     }
     printStream.print(clean);
