@@ -9,7 +9,7 @@
             class="com.google.eclipse.terminal.local.ui.view.TerminalView"
             icon="icons/terminal.gif"
             id="com.google.eclipse.terminal.local.localTerminalView"
-            name="Local Terminal"
+            name="Terminal"
             restorable="true">
       </view>
    </extension>
@@ -36,7 +36,7 @@
       <page
             class="com.google.eclipse.terminal.local.ui.preferences.RootPreferencePage"
             id="com.google.eclipse.terminal.local.page.root"
-            name="Local Terminal">
+            name="Terminal">
       </page>
    </extension>
    <extension
@@ -97,9 +97,9 @@
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            description="In Local Terminal"
+            description="In Terminal"
             id="com.google.eclipse.terminal.local.context.localTerminal"
-            name="Local Terminal"
+            name="Terminal"
             parentId="org.eclipse.ui.contexts.window">
       </context>
    </extension>
@@ -107,7 +107,7 @@
          point="org.eclipse.ui.commands">
       <category
             id="com.google.eclipse.terminal.local.commands.category"
-            name="Local Terminal">
+            name="Terminal">
       </category>
       <command
             categoryId="com.google.eclipse.terminal.local.commands.category"

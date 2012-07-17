@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Local Terminal
+Bundle-Name: Terminal
 Bundle-SymbolicName: com.google.eclipse.terminal.local;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: com.google.eclipse.terminal.local.Activator
