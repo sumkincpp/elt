@@ -15,15 +15,13 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
+import java.util.*;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.tm.terminal.model.Style;
-import org.eclipse.tm.terminal.model.StyleColor;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.eclipse.tm.terminal.model.*;
 
 public class StyleMap {
 	private static final String BLACK = "black"; //$NON-NLS-1$
@@ -86,7 +84,7 @@ public class StyleMap {
 		if(fInvertColors) {
 			setColor(fColorMapBackground, WHITE, background.red, background.green, background.blue); // set background
 			setColor(fColorMapBackground, WHITE_FOREGROUND, 50, 50, 50); // only used when colors are inverse
-			setColor(fColorMapBackground, BLACK, 255, 255, 255); // set cursor color
+			setColor(fColorMapBackground, BLACK, foreground.red, foreground.green, foreground.blue); // set cursor color
 		} else {
 			setColor(fColorMapBackground, WHITE, 255, 255, 255);
 			setColor(fColorMapBackground, WHITE_FOREGROUND, 229, 229, 229);
