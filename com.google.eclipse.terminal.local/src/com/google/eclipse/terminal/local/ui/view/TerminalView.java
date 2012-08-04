@@ -133,6 +133,7 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
     preferenceStore().addPropertyChangeListener(preferencesChangeListener);
     updateBufferLineCount();
     updateColors();
+    updateUsageOfBlinkingCursor();
     textFontChangeListener = new IPropertyChangeListener() {
       @Override public void propertyChange(PropertyChangeEvent event) {
         if (TEXT_FONT.equals(event.getProperty())) {
