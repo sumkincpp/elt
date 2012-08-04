@@ -8,8 +8,9 @@
  */
 package com.google.eclipse.terminal.local;
 
-import static com.google.eclipse.terminal.local.ImageKeys.*;
 import static org.eclipse.core.runtime.IStatus.*;
+
+import static com.google.eclipse.terminal.local.ImageKeys.*;
 
 import java.net.URL;
 

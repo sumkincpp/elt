@@ -13,9 +13,10 @@ import static org.eclipse.ui.actions.ActionFactory.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.tm.internal.terminal.control.actions.*;
-import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
 import org.eclipse.ui.*;
+
+import com.google.eclipse.tm.internal.terminal.control.actions.*;
+import com.google.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
@@ -26,6 +27,7 @@ class PopupMenu {
   private final AbstractTerminalAction selectAll;
   private final AbstractTerminalAction clearAll;
 
+  @SuppressWarnings("deprecation")
   PopupMenu(IViewSite viewSite, VT100TerminalControl terminalControl) {
     PopupMenuManager menuManager = new PopupMenuManager();
     copy = menuManager.add(new TerminalActionCopy(terminalControl));

@@ -9,6 +9,7 @@
 package com.google.eclipse.terminal.local.util;
 
 import static java.util.Collections.singletonMap;
+
 import static org.eclipse.core.runtime.Platform.*;
 
 import java.io.File;

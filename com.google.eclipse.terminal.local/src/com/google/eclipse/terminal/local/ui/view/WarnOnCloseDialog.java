@@ -8,9 +8,10 @@
  */
 package com.google.eclipse.terminal.local.ui.view;
 
+import static org.eclipse.jface.dialogs.IDialogConstants.*;
+
 import static com.google.eclipse.terminal.local.ui.preferences.GeneralPreferences.warnOnClose;
 import static com.google.eclipse.terminal.local.ui.view.Messages.*;
-import static org.eclipse.jface.dialogs.IDialogConstants.*;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;

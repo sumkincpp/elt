@@ -8,8 +8,9 @@
  */
 package com.google.eclipse.terminal.local.ui.view;
 
+
 import static com.google.eclipse.terminal.local.core.connector.LocalTerminalConnector.createLocalTerminalConnector;
-import static org.eclipse.tm.internal.terminal.provisional.api.TerminalState.CONNECTING;
+import static com.google.eclipse.tm.internal.terminal.provisional.api.TerminalState.CONNECTING;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.layout.*;
@@ -17,12 +18,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.tm.internal.terminal.control.ITerminalListener;
-import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
-import org.eclipse.tm.internal.terminal.provisional.api.*;
 import org.eclipse.ui.IViewSite;
 
 import com.google.eclipse.terminal.local.core.connector.*;
+import com.google.eclipse.tm.internal.terminal.control.ITerminalListener;
+import com.google.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
+import com.google.eclipse.tm.internal.terminal.provisional.api.*;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
@@ -121,11 +122,11 @@ class TerminalWidget extends Composite {
   }
 
   boolean isScrollLockEnabled() {
-    return terminalControl.isScrollLock();
+    return terminalControl.isScrollLockOn();
   }
 
   void enableScrollLock(boolean enabled) {
-    terminalControl.setScrollLock(enabled);
+    terminalControl.setScrollLockOn(enabled);
   }
 
   private static class TerminalListener implements ITerminalListener {

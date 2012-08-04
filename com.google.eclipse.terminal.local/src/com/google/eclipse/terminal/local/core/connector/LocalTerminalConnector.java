@@ -8,13 +8,14 @@
  */
 package com.google.eclipse.terminal.local.core.connector;
 
+import static org.eclipse.core.runtime.IStatus.*;
+
+import static com.google.eclipse.cdt.utils.Platform.*;
 import static com.google.eclipse.terminal.local.Activator.*;
 import static com.google.eclipse.terminal.local.core.connector.Messages.*;
 import static com.google.eclipse.terminal.local.core.connector.PseudoTerminal.isPlatformSupported;
 import static com.google.eclipse.terminal.local.util.Platform.*;
-import static org.eclipse.cdt.utils.Platform.*;
-import static org.eclipse.core.runtime.IStatus.*;
-import static org.eclipse.tm.internal.terminal.provisional.api.TerminalState.*;
+import static com.google.eclipse.tm.internal.terminal.provisional.api.TerminalState.*;
 
 import java.io.*;
 
@@ -23,9 +24,10 @@ import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.internal.core.StreamsProxy;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.tm.internal.terminal.connector.TerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.*;
-import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
+
+import com.google.eclipse.tm.internal.terminal.connector.TerminalConnector;
+import com.google.eclipse.tm.internal.terminal.provisional.api.*;
+import com.google.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorDelegate;
 
 /**
  * Connector to local terminal.
@@ -33,7 +35,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * @author alruiz@google.com (Alex Ruiz)
  */
 @SuppressWarnings("restriction") // StreamsProxy is internal API
-public class LocalTerminalConnector extends TerminalConnectorImpl implements LifeCycleListener {
+public class LocalTerminalConnector extends TerminalConnectorDelegate implements LifeCycleListener {
   private static final String ID = "com.google.eclipse.terminal.local.core.connector";
 
   public static final String ENCODING = "UTF-8";
@@ -46,11 +48,11 @@ public class LocalTerminalConnector extends TerminalConnectorImpl implements Lif
 
   public static ITerminalConnector createLocalTerminalConnector() {
     TerminalConnector.Factory factory = new TerminalConnector.Factory(){
-      @Override public TerminalConnectorImpl makeConnector() {
+      @Override public TerminalConnectorDelegate makeConnector() {
         return new LocalTerminalConnector();
       }
     };
-    TerminalConnector connector = new TerminalConnector(factory, ID, localTerminalName, false);
+    TerminalConnector connector = new TerminalConnector(factory, ID, localTerminalName);
     String errorMessage = connector.getInitializationErrorMessage();
     if (errorMessage != null) {
       throw new IllegalStateException(errorMessage);
@@ -63,7 +65,7 @@ public class LocalTerminalConnector extends TerminalConnectorImpl implements Lif
   /**
    * Verifies that PTY support is available on this platform.
    * @throws CoreException if PTY support is <strong>not</strong> available on this platform.
-   * @see TerminalConnectorImpl#initialize()
+   * @see TerminalConnectorDelegate#initialize()
    */
   @Override public void initialize() throws CoreException {
     if (!isPlatformSupported()) {
@@ -72,9 +74,8 @@ public class LocalTerminalConnector extends TerminalConnectorImpl implements Lif
     }
   }
 
-  @Override public void connect(ITerminalControl control) {
-    super.connect(control);
-    control.setState(CONNECTING);
+  @Override protected void connect() {
+    terminalControl.setState(CONNECTING);
     File workingDirectory = workingDirectory();
     pseudoTerminal = new PseudoTerminal(workingDirectory);
     pseudoTerminal.addLifeCycleListener(this);
@@ -82,15 +83,15 @@ public class LocalTerminalConnector extends TerminalConnectorImpl implements Lif
       pseudoTerminal.launch();
       streamsProxy = new StreamsProxy(pseudoTerminal.systemProcess(), ENCODING);
       terminalToRemoteStream = new BufferedOutputStream(new TerminalOutputStream(streamsProxy, ENCODING), 1024);
-      addListeners(control, streamsProxy.getOutputStreamMonitor(), streamsProxy.getErrorStreamMonitor());
+      addListeners(terminalControl, streamsProxy.getOutputStreamMonitor(), streamsProxy.getErrorStreamMonitor());
       if (streamsProxy != null) {
-        control.setState(CONNECTED);
+        terminalControl.setState(CONNECTED);
         return;
       }
     } catch (Throwable t) {
       log(new Status(INFO, PLUGIN_ID, OK, "Unable to start terminal", t));
     }
-    control.setState(CLOSED);
+    terminalControl.setState(CLOSED);
   }
 
   private File workingDirectory() {
@@ -113,7 +114,6 @@ public class LocalTerminalConnector extends TerminalConnectorImpl implements Lif
     listener.streamAppended(monitor.getContents(), monitor);
   }
 
-  /** {@inheritDoc} */
   @Override public OutputStream getTerminalToRemoteStream() {
     return terminalToRemoteStream;
   }
@@ -141,12 +141,12 @@ public class LocalTerminalConnector extends TerminalConnectorImpl implements Lif
     this.workingDirectory = workingDirectory;
   }
 
-  @Override protected void doDisconnect() {
+  @Override protected void onDisconnect() {
     pseudoTerminal.disconnect();
   }
 
   @Override public void executionFinished() {
-    fControl.setState(CLOSED);
+    terminalControl.setState(CLOSED);
     if (streamsProxy != null) {
       streamsProxy.close();
     }

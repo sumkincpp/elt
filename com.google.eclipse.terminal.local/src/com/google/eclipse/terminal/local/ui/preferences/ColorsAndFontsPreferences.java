@@ -8,9 +8,10 @@
  */
 package com.google.eclipse.terminal.local.ui.preferences;
 
+import static org.eclipse.jface.preference.PreferenceConverter.*;
+
 import static com.google.eclipse.terminal.local.Activator.preferenceStore;
 import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*;
-import static org.eclipse.jface.preference.PreferenceConverter.*;
 
 import org.eclipse.swt.graphics.*;
 

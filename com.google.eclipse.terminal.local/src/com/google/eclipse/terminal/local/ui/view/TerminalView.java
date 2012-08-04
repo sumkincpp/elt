@@ -8,17 +8,18 @@
  */
 package com.google.eclipse.terminal.local.ui.view;
 
+import static org.eclipse.core.runtime.Path.fromOSString;
+import static org.eclipse.core.runtime.Status.OK_STATUS;
+import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
+import static org.eclipse.jface.window.Window.OK;
+import static org.eclipse.ui.IWorkbenchPage.VIEW_ACTIVATE;
+
 import static com.google.eclipse.terminal.local.Activator.*;
 import static com.google.eclipse.terminal.local.ImageKeys.*;
 import static com.google.eclipse.terminal.local.ui.preferences.ColorsAndFontsPreferences.*;
 import static com.google.eclipse.terminal.local.ui.preferences.GeneralPreferences.*;
 import static com.google.eclipse.terminal.local.ui.view.Messages.*;
 import static com.google.eclipse.terminal.local.util.Platform.userHomeDirectory;
-import static org.eclipse.core.runtime.Path.fromOSString;
-import static org.eclipse.core.runtime.Status.OK_STATUS;
-import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
-import static org.eclipse.jface.window.Window.OK;
-import static org.eclipse.ui.IWorkbenchPage.VIEW_ACTIVATE;
 
 import java.util.UUID;
 
@@ -29,8 +30,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.tm.internal.terminal.control.ITerminalListener;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 import org.eclipse.ui.*;
 import org.eclipse.ui.contexts.*;
 import org.eclipse.ui.part.ViewPart;
@@ -38,6 +37,8 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.google.eclipse.terminal.local.core.connector.LifeCycleListener;
 import com.google.eclipse.terminal.local.ui.preferences.AbstractPreferencesChangeListener;
+import com.google.eclipse.tm.internal.terminal.control.ITerminalListener;
+import com.google.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)

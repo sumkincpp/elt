@@ -8,9 +8,10 @@
  */
 package com.google.eclipse.terminal.local.core.connector;
 
-import static com.google.eclipse.terminal.local.util.Platform.*;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
+
+import static com.google.eclipse.terminal.local.util.Platform.*;
 
 import java.io.*;
 import java.util.*;

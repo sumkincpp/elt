@@ -14,7 +14,8 @@ import java.io.*;
 
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IStreamMonitor;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+
+import com.google.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)

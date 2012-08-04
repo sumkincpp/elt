@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: com.google.eclipse.cdt.core;singleton:=true
-Bundle-Version: 5.4.0.qualifier
-Bundle-Activator: org.eclipse.cdt.core.CCorePlugin
+Bundle-Version: 1.1.0.qualifier
+Bundle-Activator: com.google.eclipse.cdt.core.CCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.core,
- org.eclipse.cdt.internal.core,
- org.eclipse.cdt.utils,
+Export-Package: com.google.eclipse.cdt.core,
+ com.google.eclipse.cdt.internal.core,
+ com.google.eclipse.cdt.utils,
  org.eclipse.cdt.utils.pty,
  org.eclipse.cdt.utils.spawner
 Require-Bundle: org.eclipse.core.resources,

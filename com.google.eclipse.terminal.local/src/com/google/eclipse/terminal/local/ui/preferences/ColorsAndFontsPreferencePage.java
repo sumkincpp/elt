@@ -8,14 +8,15 @@
  */
 package com.google.eclipse.terminal.local.ui.preferences;
 
-import static com.google.eclipse.terminal.local.Activator.*;
-import static com.google.eclipse.terminal.local.ui.preferences.Messages.*;
-import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*;
 import static org.eclipse.jface.layout.GridDataFactory.fillDefaults;
 import static org.eclipse.jface.preference.ColorSelector.PROP_COLORCHANGE;
 import static org.eclipse.jface.preference.PreferenceConverter.*;
 import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
 import static org.eclipse.ui.dialogs.PreferencesUtil.createPreferenceDialogOn;
+
+import static com.google.eclipse.terminal.local.Activator.*;
+import static com.google.eclipse.terminal.local.ui.preferences.Messages.*;
+import static com.google.eclipse.terminal.local.ui.preferences.PreferenceNames.*;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -121,7 +122,7 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
 
     lblFontData = new Label(grpFont, SWT.NONE);
     gridDataFactory.span(1, 1).applyTo(lblFontData);
-    lblFontData.setText(""); //$NON-NLS-1$
+    lblFontData.setText("");
 
     btnChangeFont = new Button(grpFont, SWT.NONE);
     btnChangeFont.setText(change);
@@ -141,7 +142,7 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
 
     previewer = new ProjectionViewer(contents, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL);
     previewer.setEditable(false);
-    previewer.setDocument(new Document(loadContentsFrom("ColorSettingPreviewText.txt"))); //$NON-NLS-1$
+    previewer.setDocument(new Document(loadContentsFrom("ColorSettingPreviewText.txt")));
 
     StyledText previewerText = previewer.getTextWidget();
     gridDataFactory.align(SWT.FILL, SWT.FILL).grab(true, true);
@@ -181,7 +182,7 @@ public class ColorsAndFontsPreferencePage extends PreferencePage implements IWor
   }
 
   private String loadContentsFrom(String fileName) {
-    String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
+    String lineSeparator = System.getProperty("line.separator");
     StringBuilder buffer = new StringBuilder();
     Scanner scanner = null;
     try {
