@@ -64,7 +64,7 @@ public class BoundedByteBuffer {
   }
 
   public void write(byte[] b, int off, int len) throws InterruptedException {
-    assert len <= getFreeSlots();
+    Assert.isTrue(len <= getFreeSlots());
     while (usedSlots == buffer.length) {
       // Wait until not full.
       wait();
