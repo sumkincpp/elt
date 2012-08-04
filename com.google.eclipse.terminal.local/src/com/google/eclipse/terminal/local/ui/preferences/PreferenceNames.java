@@ -19,6 +19,7 @@ final class PreferenceNames {
   static final String FOREGROUND_COLOR = "foregroundColor";
   static final String USE_CUSTOM_FONT = "useCustomFont";
   static final String CUSTOM_FONT_DATA = "customFontData";
+  static final String USE_BLINKING_CURSOR = "useBlinkingCursor";
 
   private PreferenceNames() {}
 }

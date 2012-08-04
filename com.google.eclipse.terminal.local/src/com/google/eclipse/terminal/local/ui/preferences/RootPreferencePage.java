@@ -24,6 +24,8 @@ import org.eclipse.ui.*;
  * @author alruiz@google.com (Alex Ruiz)
  */
 public class RootPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+  public RootPreferencePage() {
+  }
   private static final int MINIMUM_BUFFER_LINE_COUNT = 100;
   private static final int MAXIMUM_BUFFER_LINE_COUNT = 50000;
   private static final String INVALID_BUFFER_LINE_COUNT_MESSAGE =
@@ -32,6 +34,7 @@ public class RootPreferencePage extends PreferencePage implements IWorkbenchPref
   private Text txtBufferLineCount;
   private Button btnCloseViewOnExit;
   private Button btnWarnOnClose;
+  private Button btnUseBlinkingCursor;
 
   private int newBufferLineCount;
 
@@ -80,6 +83,10 @@ public class RootPreferencePage extends PreferencePage implements IWorkbenchPref
     btnWarnOnClose.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
     btnWarnOnClose.setText(warnOnClose);
 
+    btnUseBlinkingCursor = new Button(contents, SWT.CHECK);
+    btnUseBlinkingCursor.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+    btnUseBlinkingCursor.setText(useBlinkingCursor);
+
     updateContents();
     return contents;
   }
@@ -93,12 +100,14 @@ public class RootPreferencePage extends PreferencePage implements IWorkbenchPref
     txtBufferLineCount.setText(getPreferenceStore().getString(BUFFER_LINE_COUNT));
     btnCloseViewOnExit.setSelection(getPreferenceStore().getBoolean(CLOSE_VIEW_ON_EXIT));
     btnWarnOnClose.setSelection(getPreferenceStore().getBoolean(WARN_ON_CLOSE));
+    btnUseBlinkingCursor.setSelection(getPreferenceStore().getBoolean(USE_BLINKING_CURSOR));
   }
 
   @Override public boolean performOk() {
     getPreferenceStore().setValue(BUFFER_LINE_COUNT, newBufferLineCount);
     getPreferenceStore().setValue(CLOSE_VIEW_ON_EXIT, btnCloseViewOnExit.getSelection());
     getPreferenceStore().setValue(WARN_ON_CLOSE, btnWarnOnClose.getSelection());
+    getPreferenceStore().setValue(USE_BLINKING_CURSOR, btnUseBlinkingCursor.getSelection());
     return true;
   }
 
@@ -106,5 +115,6 @@ public class RootPreferencePage extends PreferencePage implements IWorkbenchPref
     txtBufferLineCount.setText(getPreferenceStore().getDefaultString(BUFFER_LINE_COUNT));
     btnCloseViewOnExit.setSelection(getPreferenceStore().getDefaultBoolean(CLOSE_VIEW_ON_EXIT));
     btnWarnOnClose.setSelection(getPreferenceStore().getDefaultBoolean(WARN_ON_CLOSE));
+    btnUseBlinkingCursor.setSelection(getPreferenceStore().getDefaultBoolean(USE_BLINKING_CURSOR));
   }
 }

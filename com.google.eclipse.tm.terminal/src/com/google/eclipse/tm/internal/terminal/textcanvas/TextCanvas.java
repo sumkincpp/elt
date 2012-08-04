@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
  * CellRenderer is responsible for painting the cell.
  */
 public class TextCanvas extends GridCanvas {
-  protected final ITextCanvasModel cellCanvasModel;
+  private final ITextCanvasModel cellCanvasModel;
   private final ILinelRenderer cellRenderer;
   private boolean scrollLockOn;
   private Point draggingStart;
@@ -391,5 +391,9 @@ public class TextCanvas extends GridCanvas {
 
   @Override public Point screenPointToCell(int x, int y) {
     return super.screenPointToCell(x, y);
+  }
+
+  public void setBlinkingCursor(boolean useBlinkingCursor) {
+    cellCanvasModel.setBlinkingCursor(useBlinkingCursor);
   }
 }

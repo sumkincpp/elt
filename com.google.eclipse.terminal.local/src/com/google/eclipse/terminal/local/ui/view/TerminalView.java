@@ -110,8 +110,7 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
         updatePartName(title);
       }
 
-      @Override public void setState(TerminalState state) {
-      }
+      @Override public void setState(TerminalState state) {}
     });
     IViewSite viewSite = getViewSite();
     preferencesChangeListener = new AbstractPreferencesChangeListener() {
@@ -125,6 +124,10 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
 
       @Override protected void onFontChanged() {
         updateFont();
+      }
+
+      @Override protected void onUseBlinkingCursorChanged() {
+        updateUsageOfBlinkingCursor();
       }
     };
     preferenceStore().addPropertyChangeListener(preferencesChangeListener);
@@ -177,6 +180,10 @@ public class TerminalView extends ViewPart implements ISaveablePart2 {
 
   private void updateFont() {
     setFont(terminalFont());
+  }
+
+  private void updateUsageOfBlinkingCursor() {
+    terminalWidget.setBlinkingCursor(useBlinkingCursor());
   }
 
   private Font terminalFont() {

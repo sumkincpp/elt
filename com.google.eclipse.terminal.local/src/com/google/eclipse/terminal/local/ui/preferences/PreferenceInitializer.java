@@ -27,6 +27,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     setDefault(BACKGROUND_COLOR, new RGB(0, 0, 0));
     setDefault(FOREGROUND_COLOR, new RGB(229, 229, 229));
     preferenceStore().setDefault(USE_CUSTOM_FONT, false);
+    preferenceStore().setDefault(USE_BLINKING_CURSOR, true);
     PreferenceConverter.setDefault(preferenceStore(), CUSTOM_FONT_DATA, JFaceResources.getTextFont().getFontData());
   }
 

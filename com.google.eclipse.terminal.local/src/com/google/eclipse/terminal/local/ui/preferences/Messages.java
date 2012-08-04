@@ -26,6 +26,7 @@ public class Messages extends NLS {
   public static String previewPrompt;
   public static String textFontLink;
   public static String unableToLoadPreviewContent;
+  public static String useBlinkingCursor;
   public static String useCustomFont;
   public static String useTextFont;
   public static String warnOnClose;

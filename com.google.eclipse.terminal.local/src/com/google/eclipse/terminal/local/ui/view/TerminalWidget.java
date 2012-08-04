@@ -129,6 +129,10 @@ class TerminalWidget extends Composite {
     terminalControl.setScrollLockOn(enabled);
   }
 
+  void setBlinkingCursor(boolean useBlinkingCursor) {
+    terminalControl.setBlinkingCursor(useBlinkingCursor);
+  }
+
   private static class TerminalListener implements ITerminalListener {
     ITerminalListener delegate;
 

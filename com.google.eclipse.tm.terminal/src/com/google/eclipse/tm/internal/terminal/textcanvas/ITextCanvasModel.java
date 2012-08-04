@@ -54,4 +54,6 @@ public interface ITextCanvasModel {
   boolean hasLineSelection(int line);
 
   String getSelectedText();
+
+  void setBlinkingCursor(boolean useBlinkingCursor);
 }

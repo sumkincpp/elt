@@ -33,11 +33,12 @@ public abstract class AbstractTextCanvasModel implements ITextCanvasModel {
   private int selectionEndColumn;
   private ITerminalTextDataSnapshot selectionSnapshot;
   private String currentSelection = "";
-  /**
-   * do not update while update is running
-   */
+
+  // do not update while update is running
   boolean inUpdate;
+
   private int columns;
+  private boolean useBlinkingCursor;
 
   public AbstractTextCanvasModel(ITerminalTextDataSnapshot snapshot) {
     this.snapshot = snapshot;
@@ -126,6 +127,11 @@ public abstract class AbstractTextCanvasModel implements ITextCanvasModel {
     return showCursor && cursorIsEnabled;
   }
 
+  @Override public void setBlinkingCursor(boolean useBlinkingCursor) {
+    this.useBlinkingCursor = useBlinkingCursor;
+    updateCursor();
+  }
+
   // TODO: should be called regularly to draw an update of the blinking cursor?
   private void updateCursor() {
     if (!cursorIsEnabled) {
@@ -158,20 +164,22 @@ public abstract class AbstractTextCanvasModel implements ITextCanvasModel {
       // Draw the new cursor
       fireCellRangeChanged(this.cursorColumn, this.cursorLine, 1, 1);
     } else {
-      long time = System.currentTimeMillis();
-      // TODO Make the cursor blink time customizable.
-      if (time - cursorTime > 500) {
-        showCursor = !showCursor;
-        cursorTime = time;
-        // On some windows machines, there is some leftover when updating the cursor.
-        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=206363
-        int col = this.cursorColumn;
-        int width = 2;
-        if (col > 0) {
-          col--;
-          width++;
+      if (useBlinkingCursor) {
+        long time = System.currentTimeMillis();
+        // TODO Make the cursor blink time customizable.
+        if (time - cursorTime > 500) {
+          showCursor = !showCursor;
+          cursorTime = time;
+          // On some windows machines, there is some leftover when updating the cursor.
+          // https://bugs.eclipse.org/bugs/show_bug.cgi?id=206363
+          int col = this.cursorColumn;
+          int width = 2;
+          if (col > 0) {
+            col--;
+            width++;
+          }
+          fireCellRangeChanged(col, this.cursorLine, width, 1);
         }
-        fireCellRangeChanged(col, this.cursorLine, width, 1);
       }
     }
   }

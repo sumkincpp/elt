@@ -19,7 +19,6 @@ import org.eclipse.swt.graphics.*;
  * @author alruiz@google.com (Alex Ruiz)
  */
 public class ColorsAndFontsPreferences {
-
   public static RGB background() {
     return getColor(preferenceStore(), BACKGROUND_COLOR);
   }
@@ -34,5 +33,9 @@ public class ColorsAndFontsPreferences {
 
   public static FontData customFontData() {
     return getFontData(preferenceStore(), CUSTOM_FONT_DATA);
+  }
+
+  public static boolean useBlinkingCursor() {
+    return preferenceStore().getBoolean(USE_BLINKING_CURSOR);
   }
 }

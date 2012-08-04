@@ -27,6 +27,9 @@ public abstract class AbstractPreferencesChangeListener implements IPropertyChan
     if (CUSTOM_FONT_DATA.equals(property)) {
       onFontChanged();
     }
+    if (USE_BLINKING_CURSOR.equals(property)) {
+      onUseBlinkingCursorChanged();
+    }
   }
 
   protected abstract void onBufferLineCountChanged();
@@ -34,4 +37,6 @@ public abstract class AbstractPreferencesChangeListener implements IPropertyChan
   protected abstract void onColorChanged();
 
   protected abstract void onFontChanged();
+
+  protected abstract void onUseBlinkingCursorChanged();
 }

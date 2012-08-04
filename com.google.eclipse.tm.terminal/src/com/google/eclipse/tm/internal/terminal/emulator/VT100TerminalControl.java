@@ -849,4 +849,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
   public void setColors(RGB background, RGB foreground) {
     textControl.setColors(background, foreground);
   }
+
+  public void setBlinkingCursor(boolean useBlinkingCursor) {
+    textControl.setBlinkingCursor(useBlinkingCursor);
+  }
 }
