@@ -8,8 +8,6 @@
  */
 package com.google.eclipse.terminal.local.core.connector;
 
-import static com.google.eclipse.terminal.local.core.connector.LocalTerminalConnector.ENCODING;
-
 import java.io.*;
 
 import org.eclipse.debug.core.IStreamListener;
@@ -23,16 +21,15 @@ import com.google.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 class TerminalOutputListener implements IStreamListener {
   private final PrintStream printStream;
 
-  TerminalOutputListener(ITerminalControl control) throws UnsupportedEncodingException {
-    printStream = new PrintStream(control.getRemoteToTerminalOutputStream(), true, ENCODING);
+  TerminalOutputListener(ITerminalControl control, String encoding) throws UnsupportedEncodingException {
+    printStream = new PrintStream(control.getRemoteToTerminalOutputStream(), true, encoding);
   }
 
   @Override public void streamAppended(String text, IStreamMonitor monitor) {
-    String clean = text;
     if (text.contains("\u001b[1A\u001b[K")) {
-      clean = text.replace("\u001b[1A\u001b[K", "\u001b[K");
+      // clean = text.replace("\u001b[1A\u001b[K", "\u001b[K");
       // TODO(alruiz) figure out why 1+ lines deleted in blaze build.
     }
-    printStream.print(clean);
+    printStream.print(text);
   }
 }

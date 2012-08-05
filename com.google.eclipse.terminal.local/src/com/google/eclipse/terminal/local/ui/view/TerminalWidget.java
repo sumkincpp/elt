@@ -8,9 +8,11 @@
  */
 package com.google.eclipse.terminal.local.ui.view;
 
-
 import static com.google.eclipse.terminal.local.core.connector.LocalTerminalConnector.createLocalTerminalConnector;
+import static com.google.eclipse.terminal.local.util.Encodings.DEFAULT_ENCODING;
 import static com.google.eclipse.tm.internal.terminal.provisional.api.TerminalState.CONNECTING;
+
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.layout.*;
@@ -34,13 +36,20 @@ class TerminalWidget extends Composite {
   private final VT100TerminalControl terminalControl;
 
   private LifeCycleListener lifeCycleListener;
+  private final String encoding = DEFAULT_ENCODING;
 
   TerminalWidget(Composite parent, IViewSite viewSite) {
     super(parent, SWT.NONE);
     GridLayoutFactory.fillDefaults().spacing(0, 0).applyTo(this);
-    ITerminalConnector terminalConnector = createLocalTerminalConnector();
+    ITerminalConnector terminalConnector = createLocalTerminalConnector(encoding);
     terminalControl = new VT100TerminalControl(terminalListener, this, new ITerminalConnector[] { terminalConnector });
     terminalControl.setConnector(terminalConnector);
+    try {
+      terminalControl.setEncoding(encoding);
+    } catch (UnsupportedEncodingException e) {
+      // TODO(alruiz): do something meaningful with the exception.
+      e.printStackTrace();
+    }
     GridDataFactory.fillDefaults().grab(true, true).applyTo(terminalControl.getRootControl());
     terminalControl.setInvertedColors(true);
     addDisposeListener(new DisposeListener() {

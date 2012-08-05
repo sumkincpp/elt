@@ -38,18 +38,10 @@ import com.google.eclipse.tm.internal.terminal.provisional.api.provider.Terminal
 public class LocalTerminalConnector extends TerminalConnectorDelegate implements LifeCycleListener {
   private static final String ID = "com.google.eclipse.terminal.local.core.connector";
 
-  public static final String ENCODING = "UTF-8";
-
-  private IPath workingDirectory;
-  private PseudoTerminal pseudoTerminal;
-
-  private StreamsProxy streamsProxy;
-  private OutputStream terminalToRemoteStream;
-
-  public static ITerminalConnector createLocalTerminalConnector() {
+  public static ITerminalConnector createLocalTerminalConnector(final String encoding) {
     TerminalConnector.Factory factory = new TerminalConnector.Factory(){
       @Override public TerminalConnectorDelegate makeConnector() {
-        return new LocalTerminalConnector();
+        return new LocalTerminalConnector(encoding);
       }
     };
     TerminalConnector connector = new TerminalConnector(factory, ID, localTerminalName);
@@ -60,7 +52,17 @@ public class LocalTerminalConnector extends TerminalConnectorDelegate implements
     return connector;
   }
 
-  private LocalTerminalConnector() {}
+  private IPath workingDirectory;
+  private PseudoTerminal pseudoTerminal;
+
+  private StreamsProxy streamsProxy;
+  private OutputStream terminalToRemoteStream;
+
+  private final String encoding;
+
+  private LocalTerminalConnector(String encoding) {
+    this.encoding = encoding;
+  }
 
   /**
    * Verifies that PTY support is available on this platform.
@@ -81,8 +83,8 @@ public class LocalTerminalConnector extends TerminalConnectorDelegate implements
     pseudoTerminal.addLifeCycleListener(this);
     try {
       pseudoTerminal.launch();
-      streamsProxy = new StreamsProxy(pseudoTerminal.systemProcess(), ENCODING);
-      terminalToRemoteStream = new BufferedOutputStream(new TerminalOutputStream(streamsProxy, ENCODING), 1024);
+      streamsProxy = new StreamsProxy(pseudoTerminal.systemProcess(), encoding);
+      terminalToRemoteStream = new BufferedOutputStream(new TerminalOutputStream(streamsProxy, encoding), 1024);
       addListeners(terminalControl, streamsProxy.getOutputStreamMonitor(), streamsProxy.getErrorStreamMonitor());
       if (streamsProxy != null) {
         terminalControl.setState(CONNECTED);
@@ -105,7 +107,7 @@ public class LocalTerminalConnector extends TerminalConnectorDelegate implements
 
   private void addListeners(ITerminalControl control, IStreamMonitor...monitors) throws UnsupportedEncodingException {
     for (IStreamMonitor monitor : monitors) {
-      addListener(monitor, new TerminalOutputListener(control));
+      addListener(monitor, new TerminalOutputListener(control, encoding));
     }
   }
 

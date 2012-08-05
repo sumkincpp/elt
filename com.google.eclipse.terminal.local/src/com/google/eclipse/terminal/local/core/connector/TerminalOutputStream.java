@@ -31,6 +31,7 @@ class TerminalOutputStream extends OutputStream {
 
   @Override
   public void write(byte[] b, int off, int len) throws IOException {
-    streamsProxy.write(new String(b, off, len, encoding));
+    String input = new String(b, off, len, encoding);
+    streamsProxy.write(input);
   }
 }
