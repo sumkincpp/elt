@@ -90,9 +90,6 @@ public class VT100Emulator implements ControlListener {
     } else {
       text = new VT100EmulatorBackend(data);
     }
-    Style style = Style.getStyle("BLACK", "WHITE");
-    text.setDefaultStyle(style);
-    text.setStyle(style);
   }
 
   /**

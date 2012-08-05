@@ -356,11 +356,12 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
   protected void sendChar(char chKey, boolean altKeyPressed) {
     try {
-      int byteToSend = chKey;
+      String text = Character.toString(chKey);
+      byte[] bytes = text.getBytes(getEncoding());
       OutputStream os = getOutputStream();
       if (os == null) {
         // Bug 207785: NPE when trying to send char while no longer connected
-        Logger.log("NOT sending '" + byteToSend + "' because no longer connected");
+        Logger.log("NOT sending '" + text + "' because no longer connected");
       } else {
         if (altKeyPressed) {
           // When the ALT key is pressed at the same time that a character is typed, translate it into an ESCAPE
@@ -370,12 +371,12 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
           // inserting the '�' character.
           //
           // TODO: Make the ESCAPE-vs-highbit behavior user configurable.
-          Logger.log("sending ESC + '" + byteToSend + "'");
+          Logger.log("sending ESC + '" + text + "'");
           getOutputStream().write('\u001b');
-          getOutputStream().write(byteToSend);
+          getOutputStream().write(bytes);
         } else {
-          Logger.log("sending '" + byteToSend + "'");
-          getOutputStream().write(byteToSend);
+          Logger.log("sending '" + text + "'");
+          getOutputStream().write(bytes);
         }
         getOutputStream().flush();
       }

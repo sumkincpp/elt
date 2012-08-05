@@ -12,7 +12,7 @@ package com.google.eclipse.terminal.local.util;
  * @author alruiz@google.com (Alex Ruiz)
  */
 public final class Encodings {
-  public static final String DEFAULT_ENCODING = "ISO-8859-1";
+  public static final String DEFAULT_ENCODING = "UTF-8";
 
   private Encodings() {}
 }

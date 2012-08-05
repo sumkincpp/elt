@@ -30,18 +30,11 @@ public class StyleMap {
 
   private static final String PREFIX = "org.eclipse.tm.internal.";
 
-  // TODO propagate the name of the font in the FontRegistry
-  private static final String DEFAULT_FONT_NAME = "terminal.views.view.font.definition";
-
-  private String fontName = DEFAULT_FONT_NAME;
-
   private final Map<StyleColor, Color> colorMapForeground = new HashMap<StyleColor, Color>();
   private final Map<StyleColor, Color> colorMapBackground = new HashMap<StyleColor, Color>();
   private final Map<StyleColor, Color> colorMapIntense = new HashMap<StyleColor, Color>();
 
   private Point charSize;
-
-  private final Style defaultStyle;
 
   private boolean invertColors;
   private boolean proportional;
@@ -51,11 +44,10 @@ public class StyleMap {
   private Color background = getColor(new RGB(0, 0, 0));
   private Color foreground = getColor(new RGB(229, 229, 229));
 
-  private Font font = JFaceResources.getFontRegistry().get(fontName);
+  private Font font = JFaceResources.getFontRegistry().get("org.eclipse.jface.textfont");
 
   StyleMap() {
     initColors();
-    defaultStyle = Style.getStyle(StyleColor.getStyleColor(BLACK), StyleColor.getStyleColor(WHITE));
     updateFont();
   }
 
@@ -159,13 +151,6 @@ public class StyleMap {
     return actualColor;
   }
 
-  private Style defaultIfNull(Style style) {
-    if (style == null) {
-      style = defaultStyle;
-    }
-    return style;
-  }
-
   public void setInvertedColors(boolean invert) {
     if (invert == invertColors) {
       return;
@@ -175,7 +160,9 @@ public class StyleMap {
   }
 
   public Font getFont(Style style) {
-    style = defaultIfNull(style);
+    if (style == null) {
+      return font;
+    }
     FontData fontDatas[] = font.getFontData();
     FontData data = fontDatas[0];
     if (style.isBold()) {
@@ -202,16 +189,7 @@ public class StyleMap {
   public void updateFont() {
     Display display = Display.getCurrent();
     GC gc = new GC(display);
-    if (JFaceResources.getFontRegistry().hasValueFor(DEFAULT_FONT_NAME)) {
-      fontName = DEFAULT_FONT_NAME;
-    } else if (JFaceResources.getFontRegistry().hasValueFor("REMOTE_COMMANDS_VIEW_FONT")) {
-      // try RSE Shell View Font
-      fontName = "REMOTE_COMMANDS_VIEW_FONT";
-    } else {
-      // fall back to "basic jface text font"
-      fontName = "org.eclipse.jface.textfont";
-    }
-    gc.setFont(getFont());
+    gc.setFont(font);
     charSize = gc.textExtent("W");
     proportional = false;
     for (char c = ' '; c <= '~'; c++) {
@@ -229,14 +207,6 @@ public class StyleMap {
     }
     for (int i = 0; i < offsets.length; i++) {
       offsets[i] = (charSize.x - offsets[i]) / 2;
-    }
-    if (!proportional) {
-      // Measure font in boldface, too, and if wider then treat like proportional.
-      gc.setFont(getFont(defaultStyle.setBold(true)));
-      Point charSizeBold = gc.textExtent("W");
-      if (charSize.x != charSizeBold.x) {
-        proportional = true;
-      }
     }
     gc.dispose();
   }
@@ -290,5 +260,6 @@ public class StyleMap {
 
   public void setFont(Font font) {
     this.font = font;
+    updateFont();
   }
 }
