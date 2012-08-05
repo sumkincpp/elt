@@ -97,12 +97,13 @@ public class TextLineRenderer implements ILinelRenderer {
       int cursorColumn = model.getCursorColumn();
       if (cursorColumn < getTerminalText().getWidth()) {
         Style style = getTerminalText().getStyle(row, cursorColumn);
-        if (style == null) {
-          // TODO make the cursor color customizable
-          style = Style.getStyle("BLACK", "WHITE");
+        if (style != null) {
+          style = style.setReverse(!style.isReverse());
+          setupGC(gc, style);
+        } else {
+          setBackground(gc, styleMap.getForegroundColor(null));
+          setForeground(gc, styleMap.getBackgroundColor(null));
         }
-        style = style.setReverse(!style.isReverse());
-        setupGC(gc, style);
         String text = String.valueOf(getTerminalText().getChar(row, cursorColumn));
         drawText(gc, x, y, colFirst, cursorColumn, text);
       }
@@ -117,9 +118,10 @@ public class TextLineRenderer implements ILinelRenderer {
       // gc.fillRectangle(x, y, styleMap.getFontWidth() * text.length(), styleMap.getFontHeight());
       for (int i = 0; i < text.length(); i++) {
         char c = text.charAt(i);
-        int newX = x + offset + i * styleMap.getFontWidth();
+        int fontWidth = styleMap.getFontWidth();
+        int newX = x + offset + i * fontWidth;
         // TODO why do I have to draw the background character by character?
-        gc.fillRectangle(newX, y, styleMap.getFontWidth(), styleMap.getFontHeight());
+        gc.fillRectangle(newX, y, fontWidth, styleMap.getFontHeight());
         if (c != ' ' && c != '\000') {
           gc.drawString(String.valueOf(c), styleMap.getCharOffset(c) + newX, y, true);
         }
@@ -131,17 +133,23 @@ public class TextLineRenderer implements ILinelRenderer {
   }
 
   private void setupGC(GC gc, Style style) {
-    Color c = styleMap.getForegrondColor(style);
-    if (c != gc.getForeground()) {
-      gc.setForeground(c);
+    setForeground(gc, styleMap.getForegroundColor(style));
+    setBackground(gc, styleMap.getBackgroundColor(style));
+    Font font = styleMap.getFont(style);
+    if (font != gc.getFont()) {
+      gc.setFont(font);
     }
-    c = styleMap.getBackgroundColor(style);
-    if (c != gc.getBackground()) {
-      gc.setBackground(c);
+  }
+
+  private void setForeground(GC gc, Color color) {
+    if (color != gc.getForeground()) {
+      gc.setForeground(color);
     }
-    Font f = styleMap.getFont(style);
-    if (f != gc.getFont()) {
-      gc.setFont(f);
+  }
+
+  private void setBackground(GC gc, Color color) {
+    if (color != gc.getBackground()) {
+      gc.setBackground(color);
     }
   }
 

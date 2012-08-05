@@ -9,7 +9,7 @@ package com.google.eclipse.tm.internal.terminal.textcanvas;
 
 import java.util.*;
 
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
@@ -48,8 +48,8 @@ public class StyleMap {
 
   private final int[] offsets = new int[256];
 
-  private RGB background = new RGB(0, 0, 0);
-  private RGB foreground = new RGB(229, 229, 229);
+  private Color background = getColor(new RGB(0, 0, 0));
+  private Color foreground = getColor(new RGB(229, 229, 229));
 
   private Font font = JFaceResources.getFontRegistry().get(fontName);
 
@@ -69,7 +69,7 @@ public class StyleMap {
     if (invertColors) {
       setColor(colorMapForeground, WHITE, 0, 0, 0);
       setColor(colorMapForeground, WHITE_FOREGROUND, 50, 50, 50);
-      setColor(colorMapForeground, BLACK, foreground.red, foreground.green, foreground.blue); // set foreground
+      setColor(colorMapForeground, BLACK, 229, 229, 229);
     } else {
       setColor(colorMapForeground, WHITE, 255, 255, 255);
       setColor(colorMapForeground, WHITE_FOREGROUND, 229, 229, 229);
@@ -86,9 +86,9 @@ public class StyleMap {
 
   private void initBackgroundColors() {
     if (invertColors) {
-      setColor(colorMapBackground, WHITE, background.red, background.green, background.blue); // set background
+      setColor(colorMapBackground, WHITE, 0, 0, 0);
       setColor(colorMapBackground, WHITE_FOREGROUND, 50, 50, 50); // only used when colors are inverse
-      setColor(colorMapBackground, BLACK, foreground.red, foreground.green, foreground.blue); // set cursor color
+      setColor(colorMapBackground, BLACK, 255, 255, 255); // cursor color
     } else {
       setColor(colorMapBackground, WHITE, 255, 255, 255);
       setColor(colorMapBackground, WHITE_FOREGROUND, 229, 229, 229);
@@ -123,39 +123,40 @@ public class StyleMap {
   }
 
   private void setColor(Map<StyleColor, Color> colorMap, String name, int r, int g, int b) {
-    String colorName = PREFIX + r + "-" + g + "-" + b;
-    Color color = JFaceResources.getColorRegistry().get(colorName);
-    if (color == null) {
-      JFaceResources.getColorRegistry().put(colorName, new RGB(r, g, b));
-      color = JFaceResources.getColorRegistry().get(colorName);
-    }
-    colorMap.put(StyleColor.getStyleColor(name), color);
-    colorMap.put(StyleColor.getStyleColor(name.toUpperCase()), color);
+    Color color = getColor(new RGB(r, g, b));
+    setColor(colorMap, color, StyleColor.getStyleColor(name));
+    setColor(colorMap, color, StyleColor.getStyleColor(name.toUpperCase()));
   }
 
-  public Color getForegrondColor(Style style) {
-    style = defaultIfNull(style);
-    Map<StyleColor, Color> map = style.isBold() ? colorMapIntense : colorMapForeground;
-    if (style.isReverse()) {
-      return getColor(map, style.getBackground());
+  private void setColor(Map<StyleColor, Color> colorMap, Color color, StyleColor styleColor) {
+    if (styleColor != null) {
+      colorMap.put(styleColor, color);
     }
-    return getColor(map, style.getForground());
+  }
+
+  public Color getForegroundColor(Style style) {
+    if (style == null) {
+      return foreground;
+    }
+    StyleColor color = style.isReverse() ? style.getBackground() : style.getForeground();
+    Map<StyleColor, Color> map = style.isBold() ? colorMapIntense : colorMapForeground;
+    Color actualColor = map.get(color);
+    if (actualColor == null) {
+      actualColor = foreground;
+    }
+    return actualColor;
   }
 
   public Color getBackgroundColor(Style style) {
-    style = defaultIfNull(style);
-    if (style.isReverse()) {
-      return getColor(colorMapBackground, style.getForground());
+    if (style == null) {
+      return background;
     }
-    return getColor(colorMapBackground, style.getBackground());
-  }
-
-  Color getColor(Map<StyleColor, Color> map, StyleColor color) {
-    Color c = map.get(color);
-    if (c == null) {
-      c = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+    StyleColor color = style.isReverse() ? style.getForeground() : style.getBackground();
+    Color actualColor = colorMapBackground.get(color);
+    if (actualColor == null) {
+      actualColor = background;
     }
-    return c;
+    return actualColor;
   }
 
   private Style defaultIfNull(Style style) {
@@ -272,9 +273,19 @@ public class StyleMap {
   }
 
   public void setColors(RGB background, RGB foreground) {
-    this.background = background;
-    this.foreground = foreground;
-    initColors();
+    this.background = getColor(background);
+    this.foreground = getColor(foreground);
+  }
+
+  private Color getColor(RGB colorData) {
+    String name = PREFIX + colorData.red + "-" + colorData.green + "-" + colorData.blue;
+    ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+    Color color = colorRegistry.get(name);
+    if (color == null) {
+      colorRegistry.put(name, colorData);
+      color = colorRegistry.get(name);
+    }
+    return color;
   }
 
   public void setFont(Font font) {

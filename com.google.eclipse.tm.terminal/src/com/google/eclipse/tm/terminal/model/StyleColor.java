@@ -7,23 +7,16 @@
  *******************************************************************************/
 package com.google.eclipse.tm.terminal.model;
 
-import java.util.*;
+import java.util.concurrent.*;
 
 public class StyleColor {
-  private static final Map<String, StyleColor> STYLE_COLORS = new HashMap<String, StyleColor>();
+  private static final ConcurrentMap<String, StyleColor> STYLE_COLORS = new ConcurrentHashMap<String, StyleColor>();
 
   private final String name;
 
   public static StyleColor getStyleColor(String name) {
-    StyleColor result;
-    synchronized (STYLE_COLORS) {
-      result = STYLE_COLORS.get(name);
-      if (result == null) {
-        result = new StyleColor(name);
-        STYLE_COLORS.put(name, result);
-      }
-    }
-    return result;
+    StyleColor result = new StyleColor(name);
+    return STYLE_COLORS.putIfAbsent(name, result);
   }
 
   private StyleColor(String name) {

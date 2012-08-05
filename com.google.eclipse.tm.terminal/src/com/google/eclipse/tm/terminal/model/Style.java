@@ -11,7 +11,7 @@ import java.util.*;
 
 // TODO add an Object for user data, use weak map to keep track of styles with associated user data.
 public class Style {
-  private final StyleColor forground;
+  private final StyleColor foreground;
   private final StyleColor background;
   private final boolean bold;
   private final boolean blink;
@@ -22,7 +22,7 @@ public class Style {
 
   private Style(StyleColor forground, StyleColor background, boolean bold, boolean blink, boolean underline,
       boolean reverse) {
-    this.forground = forground;
+    this.foreground = forground;
     this.background = background;
     this.bold = bold;
     this.blink = blink;
@@ -58,7 +58,7 @@ public class Style {
   }
 
   public Style setBackground(StyleColor background) {
-    return getStyle(forground, background, bold, blink, underline, reverse);
+    return getStyle(foreground, background, bold, blink, underline, reverse);
   }
 
   public Style setForground(String colorName) {
@@ -66,23 +66,23 @@ public class Style {
   }
 
   public Style setBackground(String colorName) {
-    return getStyle(forground, StyleColor.getStyleColor(colorName), bold, blink, underline, reverse);
+    return getStyle(foreground, StyleColor.getStyleColor(colorName), bold, blink, underline, reverse);
   }
 
   public Style setBold(boolean bold) {
-    return getStyle(forground, background, bold, blink, underline, reverse);
+    return getStyle(foreground, background, bold, blink, underline, reverse);
   }
 
   public Style setBlink(boolean blink) {
-    return getStyle(forground, background, bold, blink, underline, reverse);
+    return getStyle(foreground, background, bold, blink, underline, reverse);
   }
 
   public Style setUnderline(boolean underline) {
-    return getStyle(forground, background, bold, blink, underline, reverse);
+    return getStyle(foreground, background, bold, blink, underline, reverse);
   }
 
   public Style setReverse(boolean reverse) {
-    return getStyle(forground, background, bold, blink, underline, reverse);
+    return getStyle(foreground, background, bold, blink, underline, reverse);
   }
 
   public StyleColor getBackground() {
@@ -97,8 +97,8 @@ public class Style {
     return bold;
   }
 
-  public StyleColor getForground() {
-    return forground;
+  public StyleColor getForeground() {
+    return foreground;
   }
 
   public boolean isReverse() {
@@ -115,7 +115,7 @@ public class Style {
     result = prime * result + ((background == null) ? 0 : background.hashCode());
     result = prime * result + (blink ? 1231 : 1237);
     result = prime * result + (bold ? 1231 : 1237);
-    result = prime * result + ((forground == null) ? 0 : forground.hashCode());
+    result = prime * result + ((foreground == null) ? 0 : foreground.hashCode());
     result = prime * result + (reverse ? 1231 : 1237);
     result = prime * result + (underline ? 1231 : 1237);
     return result;
@@ -141,7 +141,7 @@ public class Style {
     if (bold != other.bold) {
       return false;
     }
-    if (forground != other.forground) {
+    if (foreground != other.foreground) {
       return false;
     }
     if (reverse != other.reverse) {
@@ -152,8 +152,8 @@ public class Style {
 
   @Override public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("Style [forground=");
-    builder.append(forground);
+    builder.append("Style [foreground=");
+    builder.append(foreground);
     builder.append(", background=");
     builder.append(background);
     builder.append(", bold=");
