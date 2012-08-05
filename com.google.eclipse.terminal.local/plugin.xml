@@ -1,153 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.views">
+  <extension point="org.eclipse.ui.views">
+    <view
+      allowMultiple="true"
+      category="org.eclipse.ui"
+      class="com.google.eclipse.terminal.local.ui.view.TerminalView"
+      icon="icons/terminal.gif"
+      id="com.google.eclipse.terminal.local.localTerminalView"
+      name="Terminal"
+      restorable="true">
+    </view>
+  </extension>
+  <extension point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension targetID="*">
       <view
-            allowMultiple="true"
-            category="org.eclipse.ui"
-            class="com.google.eclipse.terminal.local.ui.view.TerminalView"
-            icon="icons/terminal.gif"
-            id="com.google.eclipse.terminal.local.localTerminalView"
-            name="Terminal"
-            restorable="true">
+        id="com.google.eclipse.terminal.local.localTerminalView"
+        minimized="false"
+        relationship="stack"
+        relative="org.eclipse.ui.console.ConsoleView">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="*">
-         <view
-               id="com.google.eclipse.terminal.local.localTerminalView"
-               minimized="false"
-               relationship="stack"
-               relative="org.eclipse.ui.console.ConsoleView">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="com.google.eclipse.terminal.local.page.root"
-            class="com.google.eclipse.terminal.local.ui.preferences.ColorsAndFontsPreferencePage"
-            id="com.google.eclipse.terminal.local.page.colorsAndFonts"
-            name="Colors and Fonts">
-      </page>
-      <page
-            class="com.google.eclipse.terminal.local.ui.preferences.RootPreferencePage"
-            id="com.google.eclipse.terminal.local.page.root"
-            name="Terminal">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="com.google.eclipse.terminal.local.ui.preferences.PreferenceInitializer">
-      </initializer>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
+    </perspectiveExtension>
+  </extension>
+  <extension point="org.eclipse.ui.preferencePages">
+    <page
+      category="com.google.eclipse.terminal.local.page.root"
+      class="com.google.eclipse.terminal.local.ui.preferences.ColorsAndFontsPreferencePage"
+      id="com.google.eclipse.terminal.local.page.colorsAndFonts"
+      name="Colors and Fonts">
+    </page>
+    <page
+      class="com.google.eclipse.terminal.local.ui.preferences.RootPreferencePage"
+      id="com.google.eclipse.terminal.local.page.root"
+      name="Terminal">
+    </page>
+  </extension>
+  <extension point="org.eclipse.core.runtime.preferences">
+    <initializer class="com.google.eclipse.terminal.local.ui.preferences.PreferenceInitializer">
+    </initializer>
+  </extension>
+  <extension point="org.eclipse.ui.commands">
+    <command
+      categoryId="org.eclipse.ui.category.views"
+      id="com.google.eclipse.terminal.local.open"
+      name="Open Terminal Here">
+    </command>
+  </extension>
+  <extension point="org.eclipse.ui.commandImages">
+    <image
+      commandId="com.google.eclipse.terminal.local.open"
+      icon="icons/terminal.gif">
+    </image>
+  </extension>
+  <extension point="org.eclipse.ui.menus">
+    <menuContribution
+      allPopups="false"
+      locationURI="popup:org.eclipse.ui.popup.any?after=additions">
       <command
-            categoryId="org.eclipse.ui.category.views"
-            id="com.google.eclipse.terminal.local.open"
-            name="Open Terminal Here">
+        commandId="com.google.eclipse.terminal.local.open"
+        style="push">
+        <visibleWhen checkEnabled="false">
+          <and>
+            <with variable="selection">
+              <count value="1">
+              </count>
+            </with>
+            <iterate>
+              <adapt type="org.eclipse.core.resources.IResource">
+              </adapt>
+            </iterate>
+          </and>
+        </visibleWhen>
       </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commandImages">
-      <image
-            commandId="com.google.eclipse.terminal.local.open"
-            icon="icons/terminal.gif">
-      </image>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.popup.any?after=group.open">
-         <command
-               commandId="com.google.eclipse.terminal.local.open"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <and>
-                  <with
-                        variable="selection">
-                     <count
-                           value="1">
-                     </count>
-                  </with>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                     </adapt>
-                  </iterate>
-               </and>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="com.google.eclipse.terminal.local.ui.command.OpenTerminalCommand"
-            commandId="com.google.eclipse.terminal.local.open">
-      </handler>
-   </extension>
-   <extension
-         point="org.eclipse.ui.contexts">
-      <context
-            description="In Terminal"
-            id="com.google.eclipse.terminal.local.context.localTerminal"
-            name="Terminal"
-            parentId="org.eclipse.ui.contexts.window">
-      </context>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <category
-            id="com.google.eclipse.terminal.local.commands.category"
-            name="Terminal">
-      </category>
-      <command
-            categoryId="com.google.eclipse.terminal.local.commands.category"
-            id="com.google.eclipse.terminal.local.copy"
-            name="Copy">
-      </command>
-      <command
-            categoryId="com.google.eclipse.terminal.local.commands.category"
-            id="com.google.eclipse.terminal.local.paste"
-            name="Paste">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.bindings">
-      <key
-            commandId="com.google.eclipse.terminal.local.copy"
-            contextId="com.google.eclipse.terminal.local.context.localTerminal"
-            platform="carbon"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+C">
-      </key>
-      <key
-            commandId="com.google.eclipse.terminal.local.copy"
-            contextId="com.google.eclipse.terminal.local.context.localTerminal"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+C">
-      </key>
-      <key
-            commandId="com.google.eclipse.terminal.local.paste"
-            contextId="com.google.eclipse.terminal.local.context.localTerminal"
-            platform="carbon"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+V">
-      </key>
-      <key
-            commandId="com.google.eclipse.terminal.local.paste"
-            contextId="com.google.eclipse.terminal.local.context.localTerminal"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+V">
-      </key>
-   </extension>
-
+    </menuContribution>
+  </extension>
+  <extension point="org.eclipse.ui.handlers">
+    <handler
+      class="com.google.eclipse.terminal.local.ui.command.OpenTerminalCommand"
+      commandId="com.google.eclipse.terminal.local.open">
+    </handler>
+  </extension>
+  <extension point="org.eclipse.ui.contexts">
+    <context
+      description="In Terminal"
+      id="com.google.eclipse.terminal.local.context.localTerminal"
+      name="Terminal"
+      parentId="org.eclipse.ui.contexts.window">
+    </context>
+  </extension>
+  <extension point="org.eclipse.ui.commands">
+    <category
+      id="com.google.eclipse.terminal.local.commands.category"
+      name="Terminal">
+    </category>
+    <command
+      categoryId="com.google.eclipse.terminal.local.commands.category"
+      id="com.google.eclipse.terminal.local.copy"
+      name="Copy">
+    </command>
+    <command
+      categoryId="com.google.eclipse.terminal.local.commands.category"
+      id="com.google.eclipse.terminal.local.paste"
+      name="Paste">
+    </command>
+  </extension>
+  <extension point="org.eclipse.ui.bindings">
+    <key
+      commandId="com.google.eclipse.terminal.local.copy"
+      contextId="com.google.eclipse.terminal.local.context.localTerminal"
+      platform="carbon"
+      schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+      sequence="M1+C">
+    </key>
+    <key
+      commandId="com.google.eclipse.terminal.local.copy"
+      contextId="com.google.eclipse.terminal.local.context.localTerminal"
+      schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+      sequence="M1+M2+C">
+    </key>
+    <key
+      commandId="com.google.eclipse.terminal.local.paste"
+      contextId="com.google.eclipse.terminal.local.context.localTerminal"
+      platform="carbon"
+      schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+      sequence="M1+V">
+    </key>
+    <key
+      commandId="com.google.eclipse.terminal.local.paste"
+      contextId="com.google.eclipse.terminal.local.context.localTerminal"
+      schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+      sequence="M1+M2+V">
+    </key>
+  </extension>
 </plugin>
