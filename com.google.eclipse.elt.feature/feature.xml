@@ -40,13 +40,6 @@
          unpack="false"/>
 
    <plugin
-         id="com.google.eclipse.elt.macosx"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"/>
-
-   <plugin
          id="com.google.eclipse.elt.pty"
          download-size="0"
          install-size="0"
@@ -80,5 +73,12 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="com.google.eclipse.elt.pty.macosx"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
 
 </feature>
