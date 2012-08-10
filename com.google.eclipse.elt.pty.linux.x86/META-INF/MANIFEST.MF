@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName.linux.x86
 Bundle-SymbolicName: com.google.eclipse.elt.pty.linux.x86;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.1.1.qualifier
 Bundle-Vendor: %providerName
-Fragment-Host: com.google.eclipse.elt.pty;bundle-version="1.1.0"
+Fragment-Host: com.google.eclipse.elt.pty
 Bundle-Localization: plugin
 Eclipse-PlatformFilter: (&(osgi.os=linux)(osgi.arch=x86))
