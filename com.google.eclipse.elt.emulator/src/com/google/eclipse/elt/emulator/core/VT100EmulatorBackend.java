@@ -37,7 +37,6 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
   private int cursorColumn;
 
   private int cursorLine;
-  private Style defaultStyle;
   private Style style;
   private int lines;
   private int columns;
@@ -59,7 +58,7 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
         terminal.cleanLine(line);
       }
       terminal.setDimensions(lines, terminal.getWidth());
-      setStyle(getDefaultStyle());
+      setStyle(null);
       setCursor(0, 0);
     }
   }
@@ -208,23 +207,8 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
     return true;
   }
 
-  @Override public Style getDefaultStyle() {
-    synchronized (terminal) {
-      return defaultStyle;
-    }
-  }
-
-  @Override public void setDefaultStyle(Style defaultStyle) {
-    synchronized (terminal) {
-      this.defaultStyle = defaultStyle;
-    }
-  }
-
   @Override public Style getStyle() {
     synchronized (terminal) {
-      if (style == null) {
-        return defaultStyle;
-      }
       return style;
     }
   }

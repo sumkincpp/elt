@@ -261,7 +261,7 @@ public class VT100Emulator implements ControlListener {
   private void resetTerminal() {
     text.eraseAll();
     text.setCursor(0, 0);
-    text.setStyle(text.getDefaultStyle());
+    text.setStyle(null);
   }
 
   // This method is called when we have parsed an OS Command escape sequence. The only one we support is
@@ -491,6 +491,9 @@ public class VT100Emulator implements ControlListener {
       parameters[0].append('0');
     }
     Style style = text.getStyle();
+    if (style == null) {
+      style = defaultStyle();
+    }
     // There are a non-zero number of ANSI parameters. Process each one in order.
     int parameterCount = parameters.length;
     int parameterIndex = 0;
@@ -499,7 +502,7 @@ public class VT100Emulator implements ControlListener {
       switch (parameter) {
       case 0:
         // Reset all graphics modes.
-        style = text.getDefaultStyle();
+        style = defaultStyle();
         break;
       case 1:
         style = style.setBold(true);
@@ -583,6 +586,10 @@ public class VT100Emulator implements ControlListener {
       ++parameterIndex;
     }
     text.setStyle(style);
+  }
+
+  private Style defaultStyle() {
+    return Style.getStyle("black", "white");
   }
 
   // Responds to an ANSI Device Status Report (DSR) command from the remote endpoint requesting the cursor position.
@@ -781,7 +788,7 @@ public class VT100Emulator implements ControlListener {
    */
   public void resetState() {
     ansiState = ANSISTATE_INITIAL;
-    text.setStyle(text.getDefaultStyle());
+    text.setStyle(null);
   }
 
   private char getNextChar() throws IOException {

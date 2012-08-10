@@ -92,10 +92,6 @@ public interface IVT100EmulatorBackend {
    */
   void deleteLines(int lineCount);
 
-  Style getDefaultStyle();
-
-  void setDefaultStyle(Style defaultStyle);
-
   Style getStyle();
 
   /**

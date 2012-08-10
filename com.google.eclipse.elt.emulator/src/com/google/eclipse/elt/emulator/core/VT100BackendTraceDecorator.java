@@ -85,10 +85,6 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
     return backend.getCursorLine();
   }
 
-  @Override public Style getDefaultStyle() {
-    return backend.getDefaultStyle();
-  }
-
   @Override public int getLines() {
     return backend.getLines();
   }
@@ -125,11 +121,6 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
   @Override public void setCursorLine(int targetLine) {
     out.println("setCursorLine(" + targetLine + ")");
     backend.setCursorLine(targetLine);
-  }
-
-  @Override public void setDefaultStyle(Style defaultStyle) {
-    out.println("setDefaultStyle(" + defaultStyle + ")");
-    backend.setDefaultStyle(defaultStyle);
   }
 
   @Override public void setDimensions(int lines, int cols) {
