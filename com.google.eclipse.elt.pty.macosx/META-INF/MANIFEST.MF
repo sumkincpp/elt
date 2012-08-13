@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName.macosx
 Bundle-SymbolicName: com.google.eclipse.elt.pty.macosx;singleton:=true
-Bundle-Version: 1.1.1.qualifier
+Bundle-Version: 1.1.2.qualifier
 Bundle-ClassPath: cdt_macosx.jar
 Bundle-Vendor: %providerName
 Fragment-Host: com.google.eclipse.elt.pty

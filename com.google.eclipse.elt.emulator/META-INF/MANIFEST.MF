@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: com.google.eclipse.elt.emulator;singleton:=true
-Bundle-Version: 1.1.1.qualifier
+Bundle-Version: 1.1.2.qualifier
 Bundle-Activator: com.google.eclipse.elt.emulator.impl.TerminalPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
