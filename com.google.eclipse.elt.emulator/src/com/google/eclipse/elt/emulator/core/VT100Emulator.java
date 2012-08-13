@@ -502,7 +502,7 @@ public class VT100Emulator implements ControlListener {
       switch (parameter) {
       case 0:
         // Reset all graphics modes.
-        style = defaultStyle();
+        style = null;
         break;
       case 1:
         style = style.setBold(true);
