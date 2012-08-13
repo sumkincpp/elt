@@ -7,11 +7,10 @@
  *******************************************************************************/
 package com.google.eclipse.elt.emulator.impl;
 
+import static com.google.eclipse.elt.emulator.actions.Images.*;
 import static org.eclipse.core.runtime.IStatus.ERROR;
 
-import static com.google.eclipse.elt.emulator.actions.Images.*;
-
-import java.net.*;
+import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.*;
@@ -39,20 +38,15 @@ public class TerminalPlugin extends AbstractUIPlugin {
   }
 
   @Override protected void initializeImageRegistry(ImageRegistry imageRegistry) {
-    try {
-      // Local tool-bars
-      putImageInRegistry(imageRegistry, IMAGE_CLCL_CLEAR_ALL, IMAGE_DIR_LOCALTOOL + "clear_co.gif");
-      // Enabled local tool-bars
-      putImageInRegistry(imageRegistry, IMAGE_ELCL_CLEAR_ALL, IMAGE_DIR_ELCL + "clear_co.gif");
-      // Disabled local tool-bars
-      putImageInRegistry(imageRegistry, IMAGE_DLCL_CLEAR_ALL, IMAGE_DIR_DLCL + "clear_co.gif");
-    } catch (MalformedURLException malformedURLException) {
-      malformedURLException.printStackTrace();
-    }
+    // Local tool-bars
+    putImageInRegistry(imageRegistry, IMAGE_CLCL_CLEAR_ALL, IMAGE_DIR_LOCALTOOL + "clear_co.gif");
+    // Enabled local tool-bars
+    putImageInRegistry(imageRegistry, IMAGE_ELCL_CLEAR_ALL, IMAGE_DIR_ELCL + "clear_co.gif");
+    // Disabled local tool-bars
+    putImageInRegistry(imageRegistry, IMAGE_DLCL_CLEAR_ALL, IMAGE_DIR_DLCL + "clear_co.gif");
   }
 
-  protected void putImageInRegistry(
-      ImageRegistry imageRegistry, String strKey, String relativePath) throws MalformedURLException {
+  protected void putImageInRegistry(ImageRegistry imageRegistry, String strKey, String relativePath) {
     URL url = TerminalPlugin.getDefault().getBundle().getEntry(relativePath);
     ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(url);
     imageRegistry.put(strKey, imageDescriptor);

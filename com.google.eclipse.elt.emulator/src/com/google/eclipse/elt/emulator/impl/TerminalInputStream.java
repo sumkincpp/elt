@@ -154,7 +154,7 @@ public class TerminalInputStream extends InputStream {
    *
    * @return the next available byte.
    */
-  @Override public int read() throws IOException {
+  @Override public int read() {
     try {
       return queue.read();
     } catch (InterruptedException e) {
@@ -169,7 +169,7 @@ public class TerminalInputStream extends InputStream {
    */
   @Override public void close() {}
 
-  @Override public int read(byte[] b, int off, int len) throws IOException {
+  @Override public int read(byte[] b, int off, int len) {
     int n = 0;
     // Read as much as we can using a single synchronized statement.
     synchronized (queue) {
@@ -192,7 +192,7 @@ public class TerminalInputStream extends InputStream {
    *
    */
   class TerminalOutputStream extends OutputStream {
-    @Override public void write(byte[] b, int off, int len) throws IOException {
+    @Override public void write(byte[] b, int off, int len) {
       try {
         // optimization to avoid many synchronized sections: put the data in junks into the queue.
         int newOff = off;
@@ -217,7 +217,7 @@ public class TerminalInputStream extends InputStream {
       }
     }
 
-    @Override public void write(int b) throws IOException {
+    @Override public void write(int b) {
       try {
         // A kind of optimization, because both calls use the queue lock.
         synchronized (queue) {

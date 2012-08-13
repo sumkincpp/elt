@@ -61,7 +61,7 @@ public class PipedInputStream extends InputStream {
     }
   }
 
-  @Override public int read() throws IOException {
+  @Override public int read() {
     try {
       synchronized (queue) {
         return queue.read();
@@ -72,13 +72,13 @@ public class PipedInputStream extends InputStream {
     }
   }
 
-  @Override public void close() throws IOException {
+  @Override public void close() {
     synchronized (queue) {
       queue.close();
     }
   }
 
-  @Override public int read(byte[] b, int off, int len) throws IOException {
+  @Override public int read(byte[] b, int off, int len) {
     if (len == 0) {
       return 0;
     }
@@ -162,7 +162,7 @@ public class PipedInputStream extends InputStream {
       }
     }
 
-    @Override public void close() throws IOException {
+    @Override public void close() {
       synchronized (queue) {
         queue.close();
       }

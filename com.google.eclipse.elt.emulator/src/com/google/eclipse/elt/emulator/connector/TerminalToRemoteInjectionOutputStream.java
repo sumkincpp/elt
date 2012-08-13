@@ -10,43 +10,32 @@ package com.google.eclipse.elt.emulator.connector;
 import java.io.*;
 
 class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
-  /**
-   * This class handles bytes written to the {@link TerminalToRemoteInjectionOutputStream}.
-   */
-  static public abstract class Interceptor {
-    protected OutputStream original;
+  private static class BufferInterceptor {
+    private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-    public void begin(OutputStream original) throws IOException {
+    private OutputStream original;
+
+    void begin(OutputStream original) {
       this.original = original;
     }
 
-    public void write(int b) throws IOException {}
-
-    public void write(byte[] b, int off, int len) throws IOException {}
-
-    public void close() throws IOException {}
-
-    public void flush() {}
-  }
-
-  public static class BufferInterceptor extends Interceptor {
-    private final ByteArrayOutputStream fBuffer = new ByteArrayOutputStream();
-
-    @Override public void close() throws IOException {
-      original.write(fBuffer.toByteArray());
+    void close() throws IOException {
+      original.write(buffer.toByteArray());
     }
 
-    @Override public void write(byte[] b, int off, int len) throws IOException {
-      fBuffer.write(b, off, len);
+    void write(byte[] b, int off, int len) {
+      buffer.write(b, off, len);
     }
 
-    @Override public void write(int b) throws IOException {
-      fBuffer.write(b);
+    void write(int b) {
+      buffer.write(b);
     }
+
+    void flush() {}
   }
 
   private class TerminalFilterOutputStream extends OutputStream {
-    final private Object lock = TerminalToRemoteInjectionOutputStream.this;
+    final private Object lock = new Object();
 
     @Override public void close() throws IOException {
       synchronized (lock) {
@@ -93,7 +82,7 @@ class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
     }
   }
 
-  private Interceptor interceptor;
+  private BufferInterceptor interceptor;
   private TerminalFilterOutputStream injection;
 
   public TerminalToRemoteInjectionOutputStream(OutputStream out) {
@@ -115,7 +104,7 @@ class TerminalToRemoteInjectionOutputStream extends FilterOutputStream {
    * @return a output stream that can be used to write to the decorated stream.
    * @throws IOException if something goes wrong.
    */
-  public synchronized OutputStream grabOutput(Interceptor interceptor) throws IOException {
+  public synchronized OutputStream grabOutput(BufferInterceptor interceptor) throws IOException {
     if (injection != null) {
       throw new IOException("Buffer in use");
     }
