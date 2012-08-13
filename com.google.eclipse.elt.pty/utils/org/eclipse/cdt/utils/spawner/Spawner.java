@@ -158,11 +158,10 @@ public class Spawner extends Process {
   @Override public synchronized InputStream getErrorStream() {
     if (null == err) {
       if (fPty != null && !fPty.isConsole()) {
-        // If PTY is used and it's not in "Console" mode, then stderr is
-        // redirected to the PTY's output stream. Therefore, return a
-        // dummy stream for error stream.
+        // If PTY is used and it's not in "Console" mode, then stderr is redirected to the PTY's output stream.
+        // Therefore, return a dummy stream for error stream.
         err = new InputStream() {
-          @Override public int read() throws IOException {
+          @Override public int read() {
             return -1;
           }
         };

@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Display;
 
 import com.google.eclipse.elt.emulator.model.*;
 
-public class TextLineRenderer implements ILinelRenderer {
+public class TextLineRenderer implements ILineRenderer {
   private final ITextCanvasModel model;
   private final StyleMap styleMap = new StyleMap();
 

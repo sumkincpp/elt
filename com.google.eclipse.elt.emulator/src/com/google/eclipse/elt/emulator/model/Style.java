@@ -20,9 +20,15 @@ public class Style {
 
   private static final Map<Style, Style> STYLES = new HashMap<Style, Style>();
 
-  private Style(StyleColor forground, StyleColor background, boolean bold, boolean blink, boolean underline,
+  public static Style getDefaultStyle() {
+    String foreground = null;
+    String background = null;
+    return getStyle(foreground, background);
+  }
+
+  private Style(StyleColor foreground, StyleColor background, boolean bold, boolean blink, boolean underline,
       boolean reverse) {
-    this.foreground = forground;
+    this.foreground = foreground;
     this.background = background;
     this.bold = bold;
     this.blink = blink;
@@ -30,9 +36,9 @@ public class Style {
     this.reverse = reverse;
   }
 
-  public static Style getStyle(StyleColor forground, StyleColor background, boolean bold, boolean blink,
+  public static Style getStyle(StyleColor foreground, StyleColor background, boolean bold, boolean blink,
       boolean underline, boolean reverse) {
-    Style style = new Style(forground, background, bold, blink, underline, reverse);
+    Style style = new Style(foreground, background, bold, blink, underline, reverse);
     Style cached;
     synchronized (STYLES) {
       cached = STYLES.get(style);
@@ -44,17 +50,17 @@ public class Style {
     return cached;
   }
 
-  public static Style getStyle(String forground, String background) {
+  public static Style getStyle(String foreground, String background) {
     return getStyle(
-        StyleColor.getStyleColor(forground), StyleColor.getStyleColor(background), false, false, false, false);
+        StyleColor.getStyleColor(foreground), StyleColor.getStyleColor(background), false, false, false, false);
   }
 
-  public static Style getStyle(StyleColor forground, StyleColor background) {
-    return getStyle(forground, background, false, false, false, false);
+  public static Style getStyle(StyleColor foreground, StyleColor background) {
+    return getStyle(foreground, background, false, false, false, false);
   }
 
-  public Style setForground(StyleColor forground) {
-    return getStyle(forground, background, bold, blink, underline, reverse);
+  public Style setForground(StyleColor foreground) {
+    return getStyle(foreground, background, bold, blink, underline, reverse);
   }
 
   public Style setBackground(StyleColor background) {

@@ -10,7 +10,7 @@ package com.google.eclipse.elt.emulator.control;
 import java.io.UnsupportedEncodingException;
 
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Control;
 
 import com.google.eclipse.elt.emulator.provisional.api.*;
@@ -81,4 +81,8 @@ public interface ITerminalViewControl {
   boolean isScrollLockOn();
 
   void setScrollLockOn(boolean on);
+
+  void setColors(RGB background, RGB foreground);
+
+  void setBlinkingCursor(boolean useBlinkingCursor);
 }

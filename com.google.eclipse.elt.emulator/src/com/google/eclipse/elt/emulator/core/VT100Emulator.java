@@ -7,6 +7,8 @@
  *******************************************************************************/
 package com.google.eclipse.elt.emulator.core;
 
+import static com.google.eclipse.elt.emulator.model.Style.getDefaultStyle;
+
 import java.io.*;
 import java.util.List;
 
@@ -70,9 +72,7 @@ public class VT100Emulator implements ControlListener {
   private int nextAnsiParameter = 0;
 
   private int nextChar = -1;
-
   private Reader reader;
-
   private boolean crAfterNewLine;
 
   /**
@@ -114,11 +114,9 @@ public class VT100Emulator implements ControlListener {
     }
   }
 
-  public void dispose() {
-  }
+  public void dispose() {}
 
-  @Override public void controlMoved(ControlEvent event) {
-  }
+  @Override public void controlMoved(ControlEvent event) {}
 
   @Override public void controlResized(ControlEvent event) {
     adjustTerminalDimensions();
@@ -492,7 +490,7 @@ public class VT100Emulator implements ControlListener {
     }
     Style style = text.getStyle();
     if (style == null) {
-      style = defaultStyle();
+      style = getDefaultStyle();
     }
     // There are a non-zero number of ANSI parameters. Process each one in order.
     int parameterCount = parameters.length;
@@ -586,10 +584,6 @@ public class VT100Emulator implements ControlListener {
       ++parameterIndex;
     }
     text.setStyle(style);
-  }
-
-  private Style defaultStyle() {
-    return Style.getStyle("black", "white");
   }
 
   // Responds to an ANSI Device Status Report (DSR) command from the remote endpoint requesting the cursor position.

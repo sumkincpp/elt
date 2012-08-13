@@ -9,7 +9,7 @@ package com.google.eclipse.elt.emulator.textcanvas;
 
 import org.eclipse.swt.graphics.*;
 
-public interface ILinelRenderer {
+public interface ILineRenderer {
   int getCellWidth();
 
   int getCellHeight();

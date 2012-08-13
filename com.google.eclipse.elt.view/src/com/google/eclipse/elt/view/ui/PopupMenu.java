@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 import com.google.eclipse.elt.emulator.actions.*;
-import com.google.eclipse.elt.emulator.core.VT100TerminalControl;
+import com.google.eclipse.elt.emulator.control.ITerminalViewControl;
 
 /**
  * @author alruiz@google.com (Alex Ruiz)
@@ -28,7 +28,7 @@ class PopupMenu {
   private final AbstractTerminalAction clearAll;
 
   @SuppressWarnings("deprecation")
-  PopupMenu(IViewSite viewSite, VT100TerminalControl terminalControl) {
+  PopupMenu(IViewSite viewSite, ITerminalViewControl terminalControl) {
     PopupMenuManager menuManager = new PopupMenuManager();
     copy = menuManager.add(new TerminalActionCopy(terminalControl));
     copy.setActionDefinitionId("com.google.eclipse.terminal.local.copy");

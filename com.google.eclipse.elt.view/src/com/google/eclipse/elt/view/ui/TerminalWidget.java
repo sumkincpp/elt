@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IViewSite;
 
-import com.google.eclipse.elt.emulator.control.ITerminalListener;
+import com.google.eclipse.elt.emulator.control.*;
 import com.google.eclipse.elt.emulator.core.VT100TerminalControl;
 import com.google.eclipse.elt.emulator.provisional.api.*;
 import com.google.eclipse.elt.view.connector.*;
@@ -33,7 +33,7 @@ import com.google.eclipse.elt.view.connector.*;
 class TerminalWidget extends Composite {
   private final TerminalListener terminalListener = new TerminalListener();
 
-  private final VT100TerminalControl terminalControl;
+  private final ITerminalViewControl terminalControl;
 
   private LifeCycleListener lifeCycleListener;
   private final String encoding = DEFAULT_ENCODING;

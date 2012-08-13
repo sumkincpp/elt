@@ -7,10 +7,9 @@
  *******************************************************************************/
 package com.google.eclipse.elt.emulator.core;
 
+import static com.google.eclipse.elt.emulator.impl.TerminalPlugin.isOptionEnabled;
 import static org.eclipse.core.runtime.Status.OK_STATUS;
 import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertEventToUnmodifiedAccelerator;
-
-import static com.google.eclipse.elt.emulator.impl.TerminalPlugin.isOptionEnabled;
 
 import java.io.*;
 import java.net.SocketException;
@@ -56,7 +55,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
   private KeyListener keyHandler;
   private final ITerminalListener terminalListener;
   private String message = "";
-  private FocusListener fFocusListener;
+  private FocusListener focusListener;
   private ITerminalConnector connector;
   private final ITerminalConnector[] connectors;
   private final PipedInputStream inputStream;
@@ -498,9 +497,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
   protected void setupListeners() {
     keyHandler = new TerminalKeyHandler();
-    fFocusListener = new TerminalFocusListener();
+    focusListener = new TerminalFocusListener();
     getTextControl().addKeyListener(keyHandler);
-    getTextControl().addFocusListener(fFocusListener);
+    getTextControl().addFocusListener(focusListener);
   }
 
   @Override public void displayTextInTerminal(String text) {
@@ -833,10 +832,12 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
     textControl.setInvertedColors(invert);
   }
 
+  @Override
   public void setColors(RGB background, RGB foreground) {
     textControl.setColors(background, foreground);
   }
 
+  @Override
   public void setBlinkingCursor(boolean useBlinkingCursor) {
     textControl.setBlinkingCursor(useBlinkingCursor);
   }

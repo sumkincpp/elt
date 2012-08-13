@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class TextCanvas extends GridCanvas {
   private final ITextCanvasModel cellCanvasModel;
-  private final ILinelRenderer cellRenderer;
+  private final ILineRenderer cellRenderer;
   private boolean scrollLockOn;
   private Point draggingStart;
   private Point draggingEnd;
@@ -58,7 +58,7 @@ public class TextCanvas extends GridCanvas {
   /**
    * Create a new CellCanvas with the given SWT style bits. (SWT.H_SCROLL and SWT.V_SCROLL are automatically added).
    */
-  public TextCanvas(Composite parent, ITextCanvasModel model, int style, ILinelRenderer cellRenderer) {
+  public TextCanvas(Composite parent, ITextCanvasModel model, int style, ILineRenderer cellRenderer) {
     super(parent, style | SWT.H_SCROLL | SWT.V_SCROLL);
     this.cellRenderer = cellRenderer;
     setCellWidth(cellRenderer.getCellWidth());
@@ -167,7 +167,7 @@ public class TextCanvas extends GridCanvas {
     return p1.y > p2.y ? 1 : -1;
   }
 
-  public ILinelRenderer getCellRenderer() {
+  public ILineRenderer getCellRenderer() {
     return cellRenderer;
   }
 
