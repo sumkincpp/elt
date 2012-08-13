@@ -21,8 +21,8 @@ public class Style {
   private static final Map<Style, Style> STYLES = new HashMap<Style, Style>();
 
   public static Style getDefaultStyle() {
-    String foreground = null;
-    String background = null;
+    String foreground = "default";
+    String background = "default";
     return getStyle(foreground, background);
   }
 
